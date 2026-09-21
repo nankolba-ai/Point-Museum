@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>MUSEUM POINT | ในความทรงจำ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sky"></div>
+<div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="glass head">
+    <div class="head-top">
+      <div class="logo">🏛️</div>
+      <div>
+        <div class="head-sub">พิพิธภัณฑ์การเกษตรฯ</div>
+        <h1 class="head-title">MUSEUM POINT</h1>
+        <div class="head-sub2">งานมหกรรม “ในความทรงจำ”</div>
+      </div>
+    </div>
+    <div class="head-meta">
+      <span class="pill">📅 10–13 ตุลาคม 2569</span>
+      <span class="pill">🕗 08.00 – 17.00 น.</span>
+    </div>
+  </header>
+
+  <!-- SCORE -->
+  <section class="glass card score-card">
+    <div class="score-head">
+      <span class="label">คะแนนสะสมของคุณ</span>
+      <button class="chip" id="btnGoPoints">📍 จุด <span>›</span></button>
+    </div>
+    <div class="score-main">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-unit">คะแนน</div>
+    </div>
+    <div class="score-foot">
+      <span>จำนวนจุดที่สแกนแล้ว</span>
+      <span id="scanCount">สแกนแล้ว 0 จุด</span>
+    </div>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    <div class="score-mini">
+      <span>ได้มาทั้งหมด <b id="earned">0</b></span>
+      <span>ใช้ไปแล้ว <b id="spent">0</b></span>
+    </div>
+  </section>
+
+  <!-- SCAN BUTTON -->
+  <button class="scan-btn" id="btnScan">
+    <span class="scan-ico">▣</span>
+    <span class="scan-txt">
+      <b>สแกน QR Code เช็คอิน</b>
+      <small>กดเพื่อเปิดกล้องสแกนรับคะแนนตามจุด</small>
+    </span>
+    <span class="scan-arrow">›</span>
+  </button>
+
+  <!-- TABS -->
+  <div class="glass tabs">
+    <button class="tab active" data-tab="points">📍 จุดเช็คอิน</button>
+    <button class="tab" data-tab="rewards">🎁 แลกของรางวัล</button>
+  </div>
+
+  <!-- TAB: POINTS -->
+  <section id="tab-points">
+    <div class="note glass">
+      <div class="note-ico">🏪</div>
+      <div><b>ศูนย์แลกของที่ระลึก</b><br><small>นำคะแนนที่สะสมได้มาแลกรับของรางวัลพิเศษ ณ บูธกิจกรรมหลัก</small></div>
+    </div>
+    <div class="glass card">
+      <div class="sec-head"><h3>🗺️ รายการจุดเช็คอินทั้งหมด</h3><span class="count" id="ptDone">0/40</span></div>
+      <div class="filter">
+        <button class="f active" data-f="all">ทั้งหมด</button>
+        <button class="f" data-f="todo">ยังไม่สแกน</button>
+        <button class="f" data-f="done">สแกนแล้ว</button>
+      </div>
+      <div id="pointList" class="point-list"></div>
+    </div>
+    <div class="glass card">
+      <div class="sec-head"><h3>🕘 ประวัติการสแกนเช็คอิน</h3><span class="count" id="hisCount">0 รายการ</span></div>
+      <div id="history"></div>
+    </div>
+  </section>
+
+  <!-- TAB: REWARDS -->
+  <section id="tab-rewards" class="hidden">
+    <div class="glass card">
+      <div class="sec-head"><h3>🎁 ของรางวัล</h3><span class="count" id="myBal">0 คะแนน</span></div>
+      <div id="rewardList" class="reward-list"></div>
+    </div>
+    <div class="glass card">
+      <div class="sec-head"><h3>🎫 บัตรรับของรางวัลของฉัน</h3></div>
+      <div id="ticketList"></div>
+    </div>
+  </section>
+
+  <!-- ADMIN LOGIN -->
+  <footer class="glass admin-foot">
+    <div class="admin-title">🔐 สำหรับเจ้าหน้าที่ (Admin)</div>
+    <div class="admin-row">
+      <input type="password" id="adminPin" inputmode="numeric" placeholder="กรอกรหัสผ่าน">
+      <button id="btnAdminLogin">เข้าสู่ระบบ</button>
+    </div>
+    <div class="err" id="adminErr"></div>
+    <div class="copy">MUSEUM POINT · งานมหกรรม “ในความทรงจำ” 2569</div>
+  </footer>
+</div>
+
+<!-- ===== SCANNER ===== -->
+<div class="modal" id="mdScan">
+  <div class="sheet">
+    <div class="sheet-head"><h3 id="scanTitle">สแกน QR Code</h3><button class="x" data-close>✕</button></div>
+    <div id="reader"></div>
+    <div class="scan-hint" id="scanHint">หันกล้องไปที่ QR Code ประจำจุด</div>
+    <div class="manual">
+      <input id="manualCode" placeholder="หรือกรอกรหัสจุด เช่น MSP69-P01">
+      <button id="btnManual">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SURVEY ===== -->
+<div class="modal" id="mdSurvey">
+  <div class="sheet">
+    <div class="sheet-head"><h3>📝 แบบสอบถามก่อนรับของรางวัล</h3><button class="x" data-close>✕</button></div>
+    <form id="surveyForm" class="form">
+      <label>1. ชื่อ–นามสกุล <i>*</i><input name="fullname" required></label>
+      <label>2. อายุ <i>*</i><input name="age" type="number" min="1" max="120" required></label>
+      <label>3. ที่อยู่ / โซนที่อยู่อาศัย <i>*</i><input name="address" required></label>
+      <fieldset><legend>4. การเดินทาง <i>*</i></legend>
+        <label class="r"><input type="radio" name="travel" value="รถส่วนตัว" required><span>รถส่วนตัว</span></label>
+        <label class="r"><input type="radio" name="travel" value="รถสาธารณะ"><span>รถสาธารณะ</span></label>
+      </fieldset>
+      <fieldset><legend>5. หากมีรถรับ–ส่ง จากฟิวเจอร์รังสิต – พิพิธภัณฑ์ จะทำให้ตัดสินใจมาง่ายขึ้นหรือไม่ <i>*</i></legend>
+        <label class="r"><input type="radio" name="shuttle" value="ไม่มีผลต่อการตัดสินใจ" required><span>ไม่มีผลต่อการตัดสินใจ</span></label>
+        <label class="r"><input type="radio" name="shuttle" value="มีผลต่อการตัดสินใจ"><span>มีผลต่อการตัดสินใจ</span></label>
+      </fieldset>
+      <fieldset><legend>6. เคยมาเที่ยวพิพิธภัณฑ์การเกษตรฯ กี่ครั้ง <i>*</i></legend>
+        <label class="r"><input type="radio" name="visits" value="ครั้งแรก" required><span>ครั้งแรก</span></label>
+        <label class="r"><input type="radio" name="visits" value="2-5 ครั้ง"><span>2–5 ครั้ง</span></label>
+        <label class="r"><input type="radio" name="visits" value="6 ครั้งขึ้นไป"><span>6 ครั้งขึ้นไป</span></label>
+      </fieldset>
+      <fieldset><legend>7. ความพึงพอใจต่อกิจกรรมนี้ <i>*</i></legend>
+        <div class="sat" id="satBox"></div>
+      </fieldset>
+      <label>8. ข้อเสนอแนะ<textarea name="suggest" rows="3" placeholder="(ไม่บังคับ)"></textarea></label>
+      <button class="primary" type="submit">ส่งคำตอบ &amp; ยืนยันการแลกของรางวัล</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== TICKET ===== -->
+<div class="modal" id="mdTicket">
+  <div class="sheet center">
+    <div class="sheet-head"><h3>🎫 บัตรรับของรางวัล</h3><button class="x" data-close>✕</button></div>
+    <div id="ticketBody"></div>
+  </div>
+</div>
+
+<!-- ===== ADMIN ===== -->
+<div class="modal" id="mdAdmin">
+  <div class="sheet">
+    <div class="sheet-head"><h3>🛠️ ระบบเจ้าหน้าที่</h3><button class="x" data-close>✕</button></div>
+    <div class="tabs inner">
+      <button class="tab active" data-atab="verify">✅ ยืนยันรับของ</button>
+      <button class="tab" data-atab="gen">🖨️ สร้าง QR จุด</button>
+      <button class="tab" data-atab="log">📋 ประวัติ</button>
+    </div>
+    <div id="atab-verify">
+      <p class="muted">สแกน “บัตรรับของรางวัล” ของผู้ร่วมสนุก เพื่อยืนยันการรับของที่ระลึก</p>
+      <button class="primary" id="btnAdminScan">📷 เปิดกล้องสแกนบัตร</button>
+      <div id="verifyResult"></div>
+    </div>
+    <div id="atab-gen" class="hidden">
+      <p class="muted">กด “พิมพ์” เพื่อออกใบ QR ติดตามจุดต่าง ๆ (40 จุด)</p>
+      <button class="primary" id="btnPrint">🖨️ พิมพ์ QR ทั้งหมด</button>
+      <div id="qrGrid" class="qr-grid"></div>
+    </div>
+    <div id="atab-log" class="hidden"><div id="adminLog"></div></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+<script src="js/points.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
