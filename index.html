@@ -2,84 +2,155 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>MUSEUM POINT | ในความทรงจำ</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--blue:#2f7fd4;--deep:#1c5a9e;--ink:#17406e;--soft:#6b93bb;--glass:rgba(255,255,255,.55);--line:rgba(255,255,255,.7);--shadow:0 12px 34px rgba(31,92,155,.16)}
+body{font-family:'Noto Sans Thai',sans-serif;color:var(--ink);min-height:100vh;overflow-x:hidden;background:linear-gradient(180deg,#8fc7f0 0%,#bfe0f7 28%,#dff0fb 55%,#eaf7e6 100%);background-attachment:fixed}
+.cloud{position:fixed;z-index:0;border-radius:50%;filter:blur(18px);background:rgba(255,255,255,.75);pointer-events:none}
+.c1{width:280px;height:120px;top:4%;left:-60px}.c2{width:340px;height:140px;top:32%;right:-90px}.c3{width:300px;height:130px;bottom:6%;left:-70px}
+.app{position:relative;z-index:2;max-width:520px;margin:0 auto;padding:16px 14px 40px;display:flex;flex-direction:column;gap:14px}
+.glass{background:var(--glass);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow)}
+.card{padding:18px}
+.head{padding:16px 18px}.head-top{display:flex;gap:14px;align-items:center}
+.logo{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-size:30px;background:linear-gradient(145deg,#4a9fe8,#1f6bbd);box-shadow:0 8px 20px rgba(31,107,189,.4);flex:none}
+.head-sub{font-size:13px;color:var(--soft)}.head-title{font-size:25px;font-weight:800;color:var(--deep);line-height:1.15}
+.head-sub2{font-size:14px;font-weight:600;color:var(--blue)}
+.head-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pill{background:rgba(255,255,255,.75);border:1px solid #fff;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600}
+.score-head{display:flex;justify-content:space-between;align-items:center}
+.label{font-size:14px;font-weight:600;color:var(--soft)}
+.chip{border:none;border-radius:999px;padding:9px 16px;font-family:inherit;font-weight:700;font-size:14px;color:#8a5a00;background:linear-gradient(145deg,#ffe9a8,#ffcf5c);box-shadow:0 6px 14px rgba(247,183,51,.35);cursor:pointer}
+.score-main{display:flex;align-items:baseline;gap:12px;margin:6px 0 14px}
+.score-num{font-size:78px;font-weight:800;line-height:1;background:linear-gradient(160deg,#7cc4f5,#1f6bbd);-webkit-background-clip:text;background-clip:text;color:transparent}
+.score-unit{font-size:38px;font-weight:800;color:var(--deep)}
+.score-foot{display:flex;justify-content:space-between;font-size:13px;color:var(--soft);margin-bottom:7px}
+.bar{height:14px;border-radius:999px;background:rgba(255,255,255,.7);overflow:hidden;border:1px solid #fff}
+.bar-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#7cc4f5,#2f7fd4);transition:.5s}
+.score-mini{display:flex;justify-content:space-between;font-size:12px;color:var(--soft);margin-top:8px}
+.scan-btn{display:flex;align-items:center;gap:14px;width:100%;border:1px solid rgba(255,255,255,.85);cursor:pointer;background:linear-gradient(140deg,#ffe9a8,#ffc94d);border-radius:26px;padding:16px 18px;font-family:inherit;box-shadow:0 14px 30px rgba(240,180,50,.38);text-align:left;color:#7a4e00}
+.scan-btn:active{transform:scale(.98)}
+.scan-ico{width:56px;height:56px;border-radius:18px;background:#20344a;color:#ffd35c;display:grid;place-items:center;font-size:28px;flex:none}
+.scan-txt{flex:1}.scan-txt b{font-size:19px;display:block}.scan-txt small{font-size:12.5px;opacity:.85}
+.scan-arrow{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:24px}
+.tabs{display:flex;padding:6px;gap:6px}
+.tab{flex:1;border:none;background:transparent;border-radius:20px;padding:12px;font-family:inherit;font-size:15px;font-weight:700;color:var(--soft);cursor:pointer}
+.tab.active{background:#fff;color:var(--deep);box-shadow:0 6px 14px rgba(31,92,155,.15)}
+.tabs.inner{margin:4px 0 14px;background:rgba(255,255,255,.55);border-radius:20px}
+.tabs.inner .tab{font-size:13.5px;padding:10px 4px}
+.note{display:flex;gap:12px;align-items:center;padding:14px 16px;border-left:5px solid #f7b733}
+.note-ico{font-size:26px}.note small{color:var(--soft);font-size:12.5px}
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sec-head h3{font-size:16.5px;font-weight:700}
+.count{background:rgba(255,255,255,.8);border-radius:999px;padding:5px 13px;font-size:12.5px;font-weight:700;color:var(--soft)}
+.filter{display:flex;gap:7px;margin-bottom:10px}
+.f{border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.5);border-radius:999px;padding:6px 14px;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--soft);cursor:pointer}
+.f.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.point-list{max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:4px}
+.pt{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.6);border:1px solid #fff;border-radius:18px;padding:11px 13px}
+.pt.done{background:linear-gradient(120deg,rgba(214,242,222,.85),rgba(238,250,240,.8));border-color:#bfe6cb}
+.pt-no{width:34px;height:34px;border-radius:12px;background:#e8f2fb;color:var(--blue);display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.pt.done .pt-no{background:#38a86a;color:#fff}
+.pt-name{flex:1;font-size:14px;font-weight:600;line-height:1.3}
+.pt-pts{font-size:12px;font-weight:800;color:#c98a00;background:#fff3d0;border-radius:999px;padding:4px 10px;flex:none}
+.pt.done .pt-pts{color:#2d8a58;background:#dff3e6}
+.his{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;border-radius:16px;background:rgba(255,255,255,.6);margin-bottom:8px;border:1px solid #fff}
+.his b{font-size:14px}.his small{color:var(--soft);font-size:11.5px}
+.empty{text-align:center;padding:26px 10px;color:var(--soft)}.empty .big{font-size:44px;margin-bottom:6px}
+.reward-list{display:flex;flex-direction:column;gap:11px}
+.rw{display:flex;align-items:center;gap:13px;border-radius:22px;padding:14px;border:1px solid #fff;background:rgba(255,255,255,.62)}
+.rw-ico{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-size:28px;flex:none;box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.rw-info{flex:1}.rw-info b{font-size:16px;display:block}.rw-info small{color:var(--soft);font-size:12.5px}
+.rw button{border:none;border-radius:999px;padding:10px 17px;font-family:inherit;font-weight:700;font-size:13.5px;color:#fff;background:linear-gradient(140deg,#4aa3ea,#1f6bbd);cursor:pointer}
+.rw button:disabled{background:#cfdbe6;color:#8ea4b8}
+.tk{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.65);border:1px dashed #9fc6e8;border-radius:18px;padding:12px;margin-bottom:9px}
+.tk-s{display:inline-block;font-size:11.5px;font-weight:800;padding:4px 10px;border-radius:999px}
+.s-wait{background:#fff0cf;color:#b4820d}.s-ok{background:#dff3e6;color:#2d8a58}
+.modal{position:fixed;inset:0;background:rgba(18,52,86,.45);backdrop-filter:blur(6px);z-index:80;display:none;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.sheet{width:100%;max-width:520px;max-height:92vh;overflow-y:auto;background:linear-gradient(180deg,#f4fbff,#e9f5fd);border-radius:30px 30px 0 0;padding:18px}
+.sheet.center{text-align:center}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sheet-head h3{font-size:17.5px}
+.x{border:none;background:rgba(0,0,0,.06);width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;color:var(--ink)}
+#reader{border-radius:22px;overflow:hidden;background:#000;min-height:240px}
+.scan-hint{text-align:center;font-size:13px;color:var(--soft);margin:10px 0}
+.manual{display:flex;gap:8px}.manual input{flex:1}
+input,textarea{width:100%;font-family:inherit;font-size:15px;padding:12px 14px;border-radius:16px;border:1px solid #cfe3f3;background:#fff;color:var(--ink);outline:none}
+input:focus,textarea:focus{border-color:var(--blue)}
+.manual button,#btnAdminLogin{border:none;border-radius:16px;padding:0 18px;font-family:inherit;font-weight:700;color:#fff;background:var(--blue);cursor:pointer}
+.primary{width:100%;border:none;border-radius:20px;padding:15px;font-family:inherit;font-size:16px;font-weight:700;color:#fff;background:linear-gradient(140deg,#4aa3ea,#1f6bbd);cursor:pointer;margin-top:6px}
+.form{display:flex;flex-direction:column;gap:14px}
+.form label{font-size:14.5px;font-weight:600;display:block}
+.form label input,.form label textarea{margin-top:7px}
+.form i{color:#e3504a;font-style:normal}
+fieldset{border:1px solid #d7e8f6;border-radius:18px;padding:12px 14px;background:rgba(255,255,255,.7)}
+legend{font-size:14.5px;font-weight:600;padding:0 6px}
+.r{display:flex;align-items:center;gap:9px;padding:8px 2px;font-weight:500!important}
+.r input{width:20px;height:20px;accent-color:var(--blue);flex:none}
+.sat{display:flex;gap:6px;flex-wrap:wrap}
+.sat button{flex:1;min-width:64px;border:1px solid #cfe3f3;background:#fff;border-radius:14px;padding:10px 4px;font-family:inherit;font-size:13px;font-weight:600;color:var(--soft);cursor:pointer}
+.sat button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.admin-foot{padding:16px;text-align:center}
+.admin-title{font-size:14px;font-weight:700;color:var(--soft);margin-bottom:10px}
+.admin-row{display:flex;gap:8px}
+.err{color:#e3504a;font-size:12.5px;margin-top:7px;min-height:16px}
+.copy{margin-top:10px;font-size:11.5px;color:#93b2cc}
+.muted{font-size:13px;color:var(--soft);margin-bottom:10px}
+.qr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.qr-item{background:#fff;border:1px solid #dceaf6;border-radius:16px;padding:10px;text-align:center}
+.qr-item img,.qr-item canvas{margin:0 auto}
+.qr-item .n{font-size:11.5px;font-weight:700;margin-top:6px;line-height:1.25}
+.qr-item .c{font-size:10px;color:#8aa6bd}
+.vr{background:#fff;border-radius:18px;padding:14px;margin-top:12px;border:1px solid #dceaf6}
+.hidden{display:none!important}
+#toast{position:fixed;left:50%;top:22px;transform:translateX(-50%) translateY(-140px);z-index:200;background:rgba(23,64,110,.94);color:#fff;padding:13px 22px;border-radius:999px;font-size:14px;font-weight:600;transition:.35s;max-width:90vw;text-align:center;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+@media print{body *{visibility:hidden}#qrGrid,#qrGrid *{visibility:visible}#qrGrid{position:absolute;left:0;top:0;width:100%;grid-template-columns:repeat(3,1fr)}.qr-item{break-inside:avoid;border:1px dashed #999}}
+</style>
 </head>
 <body>
-<div class="sky"></div>
 <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
 
 <div class="app">
-
-  <!-- HEADER -->
   <header class="glass head">
     <div class="head-top">
       <div class="logo">🏛️</div>
-      <div>
-        <div class="head-sub">พิพิธภัณฑ์การเกษตรฯ</div>
-        <h1 class="head-title">MUSEUM POINT</h1>
-        <div class="head-sub2">งานมหกรรม “ในความทรงจำ”</div>
-      </div>
+      <div><div class="head-sub">พิพิธภัณฑ์การเกษตรฯ</div>
+      <h1 class="head-title">MUSEUM POINT</h1>
+      <div class="head-sub2">งานมหกรรม “ในความทรงจำ”</div></div>
     </div>
-    <div class="head-meta">
-      <span class="pill">📅 10–13 ตุลาคม 2569</span>
-      <span class="pill">🕗 08.00 – 17.00 น.</span>
-    </div>
+    <div class="head-meta"><span class="pill">📅 10–13 ตุลาคม 2569</span><span class="pill">🕗 08.00 – 17.00 น.</span></div>
   </header>
 
-  <!-- SCORE -->
-  <section class="glass card score-card">
-    <div class="score-head">
-      <span class="label">คะแนนสะสมของคุณ</span>
-      <button class="chip" id="btnGoPoints">📍 จุด <span>›</span></button>
-    </div>
-    <div class="score-main">
-      <div class="score-num" id="scoreNum">0</div>
-      <div class="score-unit">คะแนน</div>
-    </div>
-    <div class="score-foot">
-      <span>จำนวนจุดที่สแกนแล้ว</span>
-      <span id="scanCount">สแกนแล้ว 0 จุด</span>
-    </div>
+  <section class="glass card">
+    <div class="score-head"><span class="label">คะแนนสะสมของคุณ</span>
+      <button class="chip" id="btnGoPoints">📍 จุด ›</button></div>
+    <div class="score-main"><div class="score-num" id="scoreNum">0</div><div class="score-unit">คะแนน</div></div>
+    <div class="score-foot"><span>จำนวนจุดที่สแกนแล้ว</span><span id="scanCount">สแกนแล้ว 0 จุด</span></div>
     <div class="bar"><div class="bar-fill" id="barFill"></div></div>
-    <div class="score-mini">
-      <span>ได้มาทั้งหมด <b id="earned">0</b></span>
-      <span>ใช้ไปแล้ว <b id="spent">0</b></span>
-    </div>
+    <div class="score-mini"><span>ได้มาทั้งหมด <b id="earned">0</b></span><span>ใช้ไปแล้ว <b id="spent">0</b></span></div>
   </section>
 
-  <!-- SCAN BUTTON -->
   <button class="scan-btn" id="btnScan">
     <span class="scan-ico">▣</span>
-    <span class="scan-txt">
-      <b>สแกน QR Code เช็คอิน</b>
-      <small>กดเพื่อเปิดกล้องสแกนรับคะแนนตามจุด</small>
-    </span>
+    <span class="scan-txt"><b>สแกน QR Code เช็คอิน</b><small>กดเพื่อเปิดกล้องสแกนรับคะแนนตามจุด</small></span>
     <span class="scan-arrow">›</span>
   </button>
 
-  <!-- TABS -->
-  <div class="glass tabs">
+  <div class="glass tabs" id="mainTabs">
     <button class="tab active" data-tab="points">📍 จุดเช็คอิน</button>
     <button class="tab" data-tab="rewards">🎁 แลกของรางวัล</button>
   </div>
 
-  <!-- TAB: POINTS -->
-  <section id="tab-points">
-    <div class="note glass">
-      <div class="note-ico">🏪</div>
-      <div><b>ศูนย์แลกของที่ระลึก</b><br><small>นำคะแนนที่สะสมได้มาแลกรับของรางวัลพิเศษ ณ บูธกิจกรรมหลัก</small></div>
-    </div>
+  <section id="tab-points" style="display:flex;flex-direction:column;gap:14px">
+    <div class="note glass"><div class="note-ico">🏪</div>
+      <div><b>ศูนย์แลกของที่ระลึก</b><br><small>นำคะแนนที่สะสมได้มาแลกรับของรางวัลพิเศษ ณ บูธกิจกรรมหลัก</small></div></div>
     <div class="glass card">
       <div class="sec-head"><h3>🗺️ รายการจุดเช็คอินทั้งหมด</h3><span class="count" id="ptDone">0/40</span></div>
-      <div class="filter">
-        <button class="f active" data-f="all">ทั้งหมด</button>
-        <button class="f" data-f="todo">ยังไม่สแกน</button>
-        <button class="f" data-f="done">สแกนแล้ว</button>
-      </div>
+      <div class="filter"><button class="f active" data-f="all">ทั้งหมด</button><button class="f" data-f="todo">ยังไม่สแกน</button><button class="f" data-f="done">สแกนแล้ว</button></div>
       <div id="pointList" class="point-list"></div>
     </div>
     <div class="glass card">
@@ -88,8 +159,7 @@
     </div>
   </section>
 
-  <!-- TAB: REWARDS -->
-  <section id="tab-rewards" class="hidden">
+  <section id="tab-rewards" class="hidden" style="flex-direction:column;gap:14px">
     <div class="glass card">
       <div class="sec-head"><h3>🎁 ของรางวัล</h3><span class="count" id="myBal">0 คะแนน</span></div>
       <div id="rewardList" class="reward-list"></div>
@@ -100,97 +170,275 @@
     </div>
   </section>
 
-  <!-- ADMIN LOGIN -->
   <footer class="glass admin-foot">
     <div class="admin-title">🔐 สำหรับเจ้าหน้าที่ (Admin)</div>
-    <div class="admin-row">
-      <input type="password" id="adminPin" inputmode="numeric" placeholder="กรอกรหัสผ่าน">
-      <button id="btnAdminLogin">เข้าสู่ระบบ</button>
-    </div>
+    <div class="admin-row"><input type="password" id="adminPin" inputmode="numeric" placeholder="กรอกรหัสผ่าน"><button id="btnAdminLogin">เข้าสู่ระบบ</button></div>
     <div class="err" id="adminErr"></div>
     <div class="copy">MUSEUM POINT · งานมหกรรม “ในความทรงจำ” 2569</div>
   </footer>
 </div>
 
-<!-- ===== SCANNER ===== -->
-<div class="modal" id="mdScan">
-  <div class="sheet">
-    <div class="sheet-head"><h3 id="scanTitle">สแกน QR Code</h3><button class="x" data-close>✕</button></div>
-    <div id="reader"></div>
-    <div class="scan-hint" id="scanHint">หันกล้องไปที่ QR Code ประจำจุด</div>
-    <div class="manual">
-      <input id="manualCode" placeholder="หรือกรอกรหัสจุด เช่น MSP69-P01">
-      <button id="btnManual">ยืนยัน</button>
-    </div>
-  </div>
-</div>
+<div class="modal" id="mdScan"><div class="sheet">
+  <div class="sheet-head"><h3 id="scanTitle">สแกน QR Code</h3><button class="x" data-close>✕</button></div>
+  <div id="reader"></div>
+  <div class="scan-hint" id="scanHint">หันกล้องไปที่ QR Code ประจำจุด</div>
+  <div class="manual"><input id="manualCode" placeholder="หรือกรอกรหัสจุด เช่น MSP69-P01"><button id="btnManual">ยืนยัน</button></div>
+</div></div>
 
-<!-- ===== SURVEY ===== -->
-<div class="modal" id="mdSurvey">
-  <div class="sheet">
-    <div class="sheet-head"><h3>📝 แบบสอบถามก่อนรับของรางวัล</h3><button class="x" data-close>✕</button></div>
-    <form id="surveyForm" class="form">
-      <label>1. ชื่อ–นามสกุล <i>*</i><input name="fullname" required></label>
-      <label>2. อายุ <i>*</i><input name="age" type="number" min="1" max="120" required></label>
-      <label>3. ที่อยู่ / โซนที่อยู่อาศัย <i>*</i><input name="address" required></label>
-      <fieldset><legend>4. การเดินทาง <i>*</i></legend>
-        <label class="r"><input type="radio" name="travel" value="รถส่วนตัว" required><span>รถส่วนตัว</span></label>
-        <label class="r"><input type="radio" name="travel" value="รถสาธารณะ"><span>รถสาธารณะ</span></label>
-      </fieldset>
-      <fieldset><legend>5. หากมีรถรับ–ส่ง จากฟิวเจอร์รังสิต – พิพิธภัณฑ์ จะทำให้ตัดสินใจมาง่ายขึ้นหรือไม่ <i>*</i></legend>
-        <label class="r"><input type="radio" name="shuttle" value="ไม่มีผลต่อการตัดสินใจ" required><span>ไม่มีผลต่อการตัดสินใจ</span></label>
-        <label class="r"><input type="radio" name="shuttle" value="มีผลต่อการตัดสินใจ"><span>มีผลต่อการตัดสินใจ</span></label>
-      </fieldset>
-      <fieldset><legend>6. เคยมาเที่ยวพิพิธภัณฑ์การเกษตรฯ กี่ครั้ง <i>*</i></legend>
-        <label class="r"><input type="radio" name="visits" value="ครั้งแรก" required><span>ครั้งแรก</span></label>
-        <label class="r"><input type="radio" name="visits" value="2-5 ครั้ง"><span>2–5 ครั้ง</span></label>
-        <label class="r"><input type="radio" name="visits" value="6 ครั้งขึ้นไป"><span>6 ครั้งขึ้นไป</span></label>
-      </fieldset>
-      <fieldset><legend>7. ความพึงพอใจต่อกิจกรรมนี้ <i>*</i></legend>
-        <div class="sat" id="satBox"></div>
-      </fieldset>
-      <label>8. ข้อเสนอแนะ<textarea name="suggest" rows="3" placeholder="(ไม่บังคับ)"></textarea></label>
-      <button class="primary" type="submit">ส่งคำตอบ &amp; ยืนยันการแลกของรางวัล</button>
-    </form>
-  </div>
-</div>
+<div class="modal" id="mdSurvey"><div class="sheet">
+  <div class="sheet-head"><h3>📝 แบบสอบถามก่อนรับของรางวัล</h3><button class="x" data-close>✕</button></div>
+  <form id="surveyForm" class="form">
+    <label>1. ชื่อ–นามสกุล <i>*</i><input name="fullname" required></label>
+    <label>2. อายุ <i>*</i><input name="age" type="number" min="1" max="120" required></label>
+    <label>3. ที่อยู่ / โซนที่อยู่อาศัย <i>*</i><input name="address" required></label>
+    <fieldset><legend>4. การเดินทาง <i>*</i></legend>
+      <label class="r"><input type="radio" name="travel" value="รถส่วนตัว" required><span>รถส่วนตัว</span></label>
+      <label class="r"><input type="radio" name="travel" value="รถสาธารณะ"><span>รถสาธารณะ</span></label></fieldset>
+    <fieldset><legend>5. หากมีรถรับ–ส่ง จากฟิวเจอร์รังสิต – พิพิธภัณฑ์ จะทำให้ตัดสินใจมาง่ายขึ้นหรือไม่ <i>*</i></legend>
+      <label class="r"><input type="radio" name="shuttle" value="ไม่มีผลต่อการตัดสินใจ" required><span>ไม่มีผลต่อการตัดสินใจ</span></label>
+      <label class="r"><input type="radio" name="shuttle" value="มีผลต่อการตัดสินใจ"><span>มีผลต่อการตัดสินใจ</span></label></fieldset>
+    <fieldset><legend>6. เคยมาเที่ยวพิพิธภัณฑ์การเกษตรฯ กี่ครั้ง <i>*</i></legend>
+      <label class="r"><input type="radio" name="visits" value="ครั้งแรก" required><span>ครั้งแรก</span></label>
+      <label class="r"><input type="radio" name="visits" value="2-5 ครั้ง"><span>2–5 ครั้ง</span></label>
+      <label class="r"><input type="radio" name="visits" value="6 ครั้งขึ้นไป"><span>6 ครั้งขึ้นไป</span></label></fieldset>
+    <fieldset><legend>7. ความพึงพอใจต่อกิจกรรมนี้ <i>*</i></legend><div class="sat" id="satBox"></div></fieldset>
+    <label>8. ข้อเสนอแนะ<textarea name="suggest" rows="3" placeholder="(ไม่บังคับ)"></textarea></label>
+    <button class="primary" type="submit">ส่งคำตอบ &amp; ยืนยันการแลกของรางวัล</button>
+  </form>
+</div></div>
 
-<!-- ===== TICKET ===== -->
-<div class="modal" id="mdTicket">
-  <div class="sheet center">
-    <div class="sheet-head"><h3>🎫 บัตรรับของรางวัล</h3><button class="x" data-close>✕</button></div>
-    <div id="ticketBody"></div>
-  </div>
-</div>
+<div class="modal" id="mdTicket"><div class="sheet center">
+  <div class="sheet-head"><h3>🎫 บัตรรับของรางวัล</h3><button class="x" data-close>✕</button></div>
+  <div id="ticketBody"></div>
+</div></div>
 
-<!-- ===== ADMIN ===== -->
-<div class="modal" id="mdAdmin">
-  <div class="sheet">
-    <div class="sheet-head"><h3>🛠️ ระบบเจ้าหน้าที่</h3><button class="x" data-close>✕</button></div>
-    <div class="tabs inner">
-      <button class="tab active" data-atab="verify">✅ ยืนยันรับของ</button>
-      <button class="tab" data-atab="gen">🖨️ สร้าง QR จุด</button>
-      <button class="tab" data-atab="log">📋 ประวัติ</button>
-    </div>
-    <div id="atab-verify">
-      <p class="muted">สแกน “บัตรรับของรางวัล” ของผู้ร่วมสนุก เพื่อยืนยันการรับของที่ระลึก</p>
-      <button class="primary" id="btnAdminScan">📷 เปิดกล้องสแกนบัตร</button>
-      <div id="verifyResult"></div>
-    </div>
-    <div id="atab-gen" class="hidden">
-      <p class="muted">กด “พิมพ์” เพื่อออกใบ QR ติดตามจุดต่าง ๆ (40 จุด)</p>
-      <button class="primary" id="btnPrint">🖨️ พิมพ์ QR ทั้งหมด</button>
-      <div id="qrGrid" class="qr-grid"></div>
-    </div>
-    <div id="atab-log" class="hidden"><div id="adminLog"></div></div>
+<div class="modal" id="mdAdmin"><div class="sheet">
+  <div class="sheet-head"><h3>🛠️ ระบบเจ้าหน้าที่</h3><button class="x" data-close>✕</button></div>
+  <div class="tabs inner" id="adminTabs">
+    <button class="tab active" data-atab="verify">✅ ยืนยันรับของ</button>
+    <button class="tab" data-atab="gen">🖨️ สร้าง QR จุด</button>
+    <button class="tab" data-atab="log">📋 ประวัติ</button>
   </div>
-</div>
+  <div id="atab-verify">
+    <p class="muted">สแกน “บัตรรับของรางวัล” ของผู้ร่วมสนุก เพื่อยืนยันการรับของที่ระลึก</p>
+    <button class="primary" id="btnAdminScan">📷 เปิดกล้องสแกนบัตร</button>
+    <div id="verifyResult"></div>
+  </div>
+  <div id="atab-gen" class="hidden">
+    <p class="muted">กด “พิมพ์” เพื่อออกใบ QR ติดตามจุดต่าง ๆ (40 จุด)</p>
+    <button class="primary" id="btnPrint">🖨️ พิมพ์ QR ทั้งหมด</button>
+    <div id="qrGrid" class="qr-grid"></div>
+  </div>
+  <div id="atab-log" class="hidden"><div id="adminLog"></div></div>
+</div></div>
 
 <div id="toast"></div>
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-<script src="js/points.js"></script>
-<script src="js/app.js"></script>
+<script>
+/* ========== ตั้งค่า ========== */
+var CONFIG={
+  GAS_URL:"",              // ← ใส่ URL ของ Google Apps Script ตรงนี้ (ว่างไว้ก็เล่นได้)
+  ADMIN_PIN:"1234",
+  PP:"MSP69-", PT:"MSP69T|"
+};
+
+/* ========== 40 จุด ========== */
+var NAMES=["ซุ้มประตูทางเข้า ในความทรงจำ","ลานเมฆขาวต้อนรับ","โถงแห่งความทรงจำ","ห้องฉายภาพยนตร์ 3 มิติ","นิทรรศการในหลวงรักเรา","ห้องเรื่องของพ่อในบ้านของเรา","โซนน้ำคือชีวิต","โซนดินคือชีวิต","โซนป่าคือชีวิต","นวัตกรรมเกษตรเศรษฐกิจพอเพียง","บ้านดินมหัศจรรย์","สวนสมุนไพรไทย","นาข้าวสาธิต","ลานนวดข้าวภูมิปัญญา","บ้านต้นไม้แห่งความสุข","โซนเกษตรอินทรีย์วิถีไทย","โรงเรือนผักปลอดภัย","ลานเพาะกล้าไม้","บ่อปลาพอเพียง","เล้าไก่ไข่อารมณ์ดี","โซนปุ๋ยหมักชีวภาพ","พิพิธภัณฑ์มหัศจรรย์พันธุกรรม","โซนเกษตรพอเพียงเมือง","ตลาดนัดเศรษฐกิจพอเพียง","ลานวัฒนธรรมพื้นบ้าน","เวทีการแสดงกลางงาน","โซนหัตถกรรมภูมิปัญญา","ลานกิจกรรมเด็กและครอบครัว","จุดชมวิวทุ่งหญ้าเมฆลอย","ศาลาพักใจริมน้ำ","หอเทิดพระเกียรติ ร.9","ห้องทรงงานจำลอง","นิทรรศการ ในความทรงจำ ชั้น 2","โดมภาพยนตร์ดวงดาวแห่งความทรงจำ","ห้องสมุดแห่งแผ่นดิน","โซนโครงการหลวงบนดอยสูง","ฝายชะลอน้ำจำลอง","แปลงเกษตรทฤษฎีใหม่","หอคอยเมฆา ชมวิว 360 องศา","บูธกิจกรรมหลัก ศูนย์แลกของที่ระลึก"];
+var POINTS=NAMES.map(function(n,i){return {id:"P"+("0"+(i+1)).slice(-2),no:i+1,name:n,pts:i<30?5:15}});
+var REWARDS=[
+ {id:"silver",name:"เหรียญเงิน",cost:50,ico:"🥈",bg:"linear-gradient(145deg,#e8eef5,#b9c7d6)"},
+ {id:"gold",name:"เหรียญทอง",cost:100,ico:"🥇",bg:"linear-gradient(145deg,#ffe9a8,#f0b429)"},
+ {id:"diamond",name:"เพชร",cost:200,ico:"💎",bg:"linear-gradient(145deg,#d9f2ff,#7cc4f5)"},
+ {id:"supernova",name:"ซุปเปอร์โนว่า",cost:300,ico:"🌟",bg:"linear-gradient(145deg,#ffd6f0,#b07cf5)"}];
+
+/* ========== ข้อมูลผู้เล่น ========== */
+var KEY="msp69";
+var S=JSON.parse(localStorage.getItem(KEY)||"null")||{uid:"U"+Date.now().toString(36).toUpperCase(),scanned:[],tickets:[],survey:null,spent:0};
+function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+function earned(){return S.scanned.reduce(function(a,b){return a+b.pts},0)}
+function balance(){return earned()-S.spent}
+function $(s){return document.querySelector(s)}
+function $(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
+function toast(m){var t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._);t._=setTimeout(function(){t.classList.remove("show")},2600)}
+function openM(i){$(i).classList.add("show")}
+function closeM(i){$(i).classList.remove("show")}
+
+/* ========== QR แบบรูปภาพ (ไม่ต้องใช้ไลบรารีเสริม) ========== */
+function qrImg(text,size){
+  var im=document.createElement("img");
+  im.src="https://api.qrserver.com/v1/create-qr-code/?size="+size+"x"+size+"&data="+encodeURIComponent(text);
+  im.width=size;im.height=size;im.alt=text;return im;
+}
+
+/* ========== แสดงผล ========== */
+var FILTER="all";
+function render(){
+  $("#scoreNum").textContent=balance();
+  $("#earned").textContent=earned();
+  $("#spent").textContent=S.spent;
+  $("#scanCount").textContent="สแกนแล้ว "+S.scanned.length+" จุด";
+  $("#barFill").style.width=(S.scanned.length/POINTS.length*100)+"%";
+  $("#ptDone").textContent=S.scanned.length+"/"+POINTS.length;
+  $("#hisCount").textContent=S.scanned.length+" รายการ";
+  $("#myBal").textContent=balance()+" คะแนน";
+  renderPoints();renderHistory();renderRewards();renderTickets();
+}
+function renderPoints(){
+  var done={};S.scanned.forEach(function(x){done[x.id]=1});
+  var list=POINTS.filter(function(p){return FILTER==="all"||(FILTER==="done")===!!done[p.id]});
+  $("#pointList").innerHTML=list.length?list.map(function(p){
+    return '<div class="pt '+(done[p.id]?"done":"")+'"><div class="pt-no">'+(done[p.id]?"✓":p.no)+'</div><div class="pt-name">'+p.name+'</div><div class="pt-pts">'+p.pts+' คะแนน</div></div>'}).join(""):'<div class="empty">ไม่มีรายการ</div>';
+}
+function renderHistory(){
+  $("#history").innerHTML=S.scanned.length?S.scanned.slice().reverse().map(function(h){
+    return '<div class="his"><div><b>'+h.no+'. '+h.name+'</b><br><small>'+h.time+'</small></div><div class="pt-pts">+'+h.pts+'</div></div>'}).join(""):'<div class="empty"><div class="big">☁️</div>ยังไม่มีประวัติการสแกนเช็คอิน<br><small>เริ่มสแกนเพื่อเก็บคะแนนกันเลย!</small></div>';
+}
+function renderRewards(){
+  $("#rewardList").innerHTML=REWARDS.map(function(r){
+    var ok=balance()>=r.cost;
+    return '<div class="rw"><div class="rw-ico" style="background:'+r.bg+'">'+r.ico+'</div><div class="rw-info"><b>'+r.name+'</b><small>ใช้ '+r.cost+' คะแนน</small></div><button '+(ok?"":"disabled")+' data-rw="'+r.id+'">'+(ok?"แลกเลย":"คะแนนไม่พอ")+'</button></div>'}).join("");
+}
+function renderTickets(){
+  $("#ticketList").innerHTML=S.tickets.length?S.tickets.map(function(t){
+    var r=REWARDS.filter(function(x){return x.id===t.reward})[0];
+    return '<div class="tk"><div class="rw-ico" style="background:'+r.bg+';width:44px;height:44px;font-size:22px">'+r.ico+'</div><div class="rw-info"><b>'+r.name+'</b><small>รหัส '+t.code+' · '+t.time+'</small></div><div><span class="tk-s '+(t.confirmed?"s-ok":"s-wait")+'">'+(t.confirmed?"รับแล้ว":"รอรับของ")+'</span><br><button style="margin-top:6px" data-tk="'+t.code+'">แสดง QR</button></div></div>'}).join(""):'<div class="empty"><div class="big">🎫</div>ยังไม่มีบัตรรับของรางวัล</div>';
+}
+
+/* ========== คลิกทั้งหมดรวมศูนย์ (กันปุ่มตาย) ========== */
+document.addEventListener("click",function(e){
+  var el=e.target.closest("[data-close],[data-rw],[data-tk],[data-tab],[data-atab],[data-f],[data-sat]");
+  if(!el)return;
+  if(el.hasAttribute("data-close")){var m=el.closest(".modal");m.classList.remove("show");if(m.id==="mdScan")stopScan();return}
+  if(el.dataset.rw)return startRedeem(el.dataset.rw);
+  if(el.dataset.tk)return showTicket(el.dataset.tk);
+  if(el.dataset.tab){
+    $("#mainTabs .tab").forEach(function(x){x.classList.remove("active")});el.classList.add("active");
+    $("#tab-points").style.display=el.dataset.tab==="points"?"flex":"none";
+    $("#tab-rewards").classList.toggle("hidden",el.dataset.tab!=="rewards");
+    $("#tab-rewards").style.display=el.dataset.tab==="rewards"?"flex":"none";return}
+  if(el.dataset.atab){
+    $("#adminTabs .tab").forEach(function(x){x.classList.remove("active")});el.classList.add("active");
+    ["verify","gen","log"].forEach(function(t){$("#atab-"+t).classList.toggle("hidden",t!==el.dataset.atab)});return}
+  if(el.dataset.f){$(".f").forEach(function(x){x.classList.remove("active")});el.classList.add("active");FILTER=el.dataset.f;renderPoints();return}
+  if(el.dataset.sat){satVal=el.dataset.sat;$("[data-sat]").forEach(function(x){x.classList.remove("on")});el.classList.add("on")}
+});
+
+/* ========== กล้องสแกน ========== */
+var qr=null,MODE="checkin";
+function startScan(mode){
+  MODE=mode;
+  $("#scanTitle").textContent=mode==="admin"?"สแกนบัตรรับของรางวัล":"สแกน QR Code เช็คอิน";
+  $("#scanHint").textContent=mode==="admin"?"หันกล้องไปที่ QR บัตรของผู้ร่วมสนุก":"หันกล้องไปที่ QR Code ประจำจุด";
+  openM("#mdScan");
+  if(typeof Html5Qrcode==="undefined"){toast("โหลดตัวอ่าน QR ไม่สำเร็จ ลองใช้ช่องกรอกรหัสด้านล่าง");return}
+  qr=new Html5Qrcode("reader");
+  qr.start({facingMode:"environment"},{fps:10,qrbox:{width:240,height:240}},
+    function(txt){stopScan();closeM("#mdScan");handleCode(txt.trim())},function(){})
+   .catch(function(){toast("เปิดกล้องไม่ได้ — ต้องเปิดผ่าน https และอนุญาตสิทธิ์กล้อง")});
+}
+function stopScan(){if(qr){qr.stop().then(function(){qr.clear()}).catch(function(){});qr=null}}
+$("#btnScan").addEventListener("click",function(){startScan("checkin")});
+$("#btnAdminScan").addEventListener("click",function(){startScan("admin")});
+$("#btnManual").addEventListener("click",function(){
+  var v=$("#manualCode").value.trim();if(!v)return;stopScan();closeM("#mdScan");$("#manualCode").value="";handleCode(v)});
+
+function handleCode(txt){
+  if(MODE==="admin")return adminVerify(txt);
+  var code=txt.toUpperCase();
+  if(code.indexOf(CONFIG.PP)>-1)code=CONFIG.PP+code.split(CONFIG.PP)[1].slice(0,3);
+  else if(/^P\d{2}$/.test(code))code=CONFIG.PP+code;
+  var p=POINTS.filter(function(x){return CONFIG.PP+x.id===code})[0];
+  if(!p)return toast("❌ QR Code นี้ไม่ใช่จุดเช็คอินของกิจกรรม");
+  if(S.scanned.some(function(x){return x.id===p.id}))return toast("⚠️ จุดนี้สแกนไปแล้ว ไม่สามารถสแกนซ้ำได้");
+  S.scanned.push({id:p.id,no:p.no,name:p.name,pts:p.pts,time:new Date().toLocaleString("th-TH")});
+  save();render();toast("✅ "+p.name+" +"+p.pts+" คะแนน");
+}
+
+/* ========== แลกรางวัล + แบบสอบถาม ========== */
+var pendingReward=null,satVal="";
+var SATS=["มากที่สุด","มาก","พอใช้","น้อย","น้อยที่สุด"];
+$("#satBox").innerHTML=SATS.map(function(s){return '<button type="button" data-sat="'+s+'">'+s+'</button>'}).join("");
+
+function startRedeem(id){
+  var r=REWARDS.filter(function(x){return x.id===id})[0];
+  if(balance()<r.cost)return toast("คะแนนไม่พอ");
+  pendingReward=r;
+  if(S.survey){if(confirm('ยืนยันใช้ '+r.cost+' คะแนน แลก "'+r.name+'" ?'))doRedeem()}
+  else openM("#mdSurvey");
+}
+$("#surveyForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  if(!satVal)return toast("กรุณาเลือกระดับความพึงพอใจ");
+  var f=new FormData(e.target);
+  S.survey={fullname:f.get("fullname"),age:f.get("age"),address:f.get("address"),travel:f.get("travel"),
+    shuttle:f.get("shuttle"),visits:f.get("visits"),satisfaction:satVal,suggest:f.get("suggest")||"-"};
+  save();closeM("#mdSurvey");doRedeem();
+});
+function doRedeem(){
+  var r=pendingReward;
+  var code=r.id.slice(0,2).toUpperCase()+Date.now().toString(36).slice(-5).toUpperCase();
+  S.spent+=r.cost;
+  S.tickets.push({reward:r.id,code:code,confirmed:false,time:new Date().toLocaleString("th-TH")});
+  save();render();sendSheet(r,code);showTicket(code);toast("🎉 แลก "+r.name+" สำเร็จ!");
+}
+function showTicket(code){
+  var t=S.tickets.filter(function(x){return x.code===code})[0];
+  var r=REWARDS.filter(function(x){return x.id===t.reward})[0];
+  $("#ticketBody").innerHTML='<div class="rw-ico" style="margin:0 auto 10px;background:'+r.bg+';width:70px;height:70px;font-size:36px">'+r.ico+'</div><b style="font-size:19px">'+r.name+'</b><p class="muted">แสดง QR นี้ให้เจ้าหน้าที่สแกนเพื่อรับของที่ระลึก</p><div id="tkQR" style="display:flex;justify-content:center;background:#fff;padding:16px;border-radius:20px"></div><p style="margin-top:10px;font-weight:700">รหัส '+t.code+'</p><span class="tk-s '+(t.confirmed?"s-ok":"s-wait")+'">'+(t.confirmed?"รับของแล้ว":"รอรับของ")+'</span>';
+  $("#tkQR").appendChild(qrImg(CONFIG.PT+S.uid+"|"+t.reward+"|"+t.code,200));
+  openM("#mdTicket");
+}
+
+/* ========== ส่งเข้า Google Sheet ========== */
+function sendSheet(r,code){
+  if(!CONFIG.GAS_URL)return;
+  fetch(CONFIG.GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(Object.assign({action:"redeem",uid:S.uid,reward:r.name,cost:r.cost,code:code,
+      totalScan:S.scanned.length,totalEarn:earned(),
+      scannedPoints:S.scanned.map(function(x){return x.no}).join(",")},S.survey))}).catch(function(){});
+}
+
+/* ========== แอดมิน ========== */
+$("#btnAdminLogin").addEventListener("click",function(){
+  if($("#adminPin").value.trim()===CONFIG.ADMIN_PIN){
+    $("#adminPin").value="";$("#adminErr").textContent="";openM("#mdAdmin");buildQR();renderLog();
+  }else $("#adminErr").textContent="รหัสผ่านไม่ถูกต้อง";
+});
+$("#adminPin").addEventListener("keydown",function(e){if(e.key==="Enter")$("#btnAdminLogin").click()});
+function buildQR(){
+  var g=$("#qrGrid");if(g.dataset.built)return;g.dataset.built=1;
+  POINTS.forEach(function(p){
+    var d=document.createElement("div");d.className="qr-item";
+    d.appendChild(qrImg(CONFIG.PP+p.id,120));
+    d.insertAdjacentHTML("beforeend",'<div class="n">จุดที่ '+p.no+' · '+p.pts+' คะแนน<br>'+p.name+'</div><div class="c">'+CONFIG.PP+p.id+'</div>');
+    g.appendChild(d);
+  });
+}
+$("#btnPrint").addEventListener("click",function(){window.print()});
+var LOG=JSON.parse(localStorage.getItem("msp69log")||"[]");
+function adminVerify(txt){
+  if(txt.indexOf(CONFIG.PT)!==0)return toast("❌ ไม่ใช่บัตรรับของรางวัล");
+  var a=txt.split("|"),uid=a[1],rw=a[2],code=a[3];
+  var r=REWARDS.filter(function(x){return x.id===rw})[0]||{name:rw,ico:"🎁"};
+  if(LOG.some(function(l){return l.code===code}))return toast("⚠️ บัตรนี้ถูกยืนยันรับของไปแล้ว");
+  $("#verifyResult").innerHTML='<div class="vr"><b style="font-size:17px">'+r.ico+' '+r.name+'</b><p class="muted">รหัสบัตร: '+code+'<br>ผู้เล่น: '+uid+'</p><button class="primary" id="btnOk">✅ ยืนยันการรับของที่ระลึก</button></div>';
+  $("#btnOk").addEventListener("click",function(){
+    LOG.push({code:code,reward:r.name,uid:uid,time:new Date().toLocaleString("th-TH")});
+    localStorage.setItem("msp69log",JSON.stringify(LOG));
+    var t=S.tickets.filter(function(x){return x.code===code})[0];if(t){t.confirmed=true;save();render()}
+    if(CONFIG.GAS_URL)fetch(CONFIG.GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"confirm",uid:uid,code:code,reward:r.name})}).catch(function(){});
+    $("#verifyResult").innerHTML='<div class="vr" style="text-align:center"><div style="font-size:44px">✅</div><b>ยืนยันสำเร็จ</b><p class="muted">'+r.name+' · '+code+'</p></div>';
+    renderLog();toast("ยืนยันการรับของเรียบร้อย");
+  });
+}
+function renderLog(){
+  $("#adminLog").innerHTML=LOG.length?LOG.slice().reverse().map(function(l){
+    return '<div class="his"><div><b>'+l.reward+'</b><br><small>'+l.code+' · '+l.time+'</small></div><span class="tk-s s-ok">รับแล้ว</span></div>'}).join(""):'<div class="empty"><div class="big">📋</div>ยังไม่มีการยืนยันรับของ</div>';
+}
+$("#btnGoPoints").addEventListener("click",function(){$("#pointList").scrollIntoView({behavior:"smooth"})});
+window.onerror=function(m){toast("เกิดข้อผิดพลาด: "+m)};
+render();
+</script>
 </body>
 </html>
