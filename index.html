@@ -239,9 +239,14 @@ legend{font-size:14.5px;font-weight:600;padding:0 6px}
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
+<script>
 window.onerror=function(m,s,l){var b=document.getElementById('errbox');b.style.display='block';b.textContent='⚠️ พบข้อผิดพลาด: '+m+' (บรรทัด '+l+')';};
 
-var CONFIG={GAS_URL:"https://script.google.com/macros/s/AKfycbzuJrVNTOlgpawOaMgXcAuT4k4Y_yg6Qb7RgNnhsjpViLwIFSLx9PW6j7PWazZosNgU/exec",ADMIN_PIN:"0615",PP:"MSP69-",PT:"MSP69T|"};
+/* ★★★ วาง URL ของ Apps Script ตรงนี้ (ลงท้ายด้วย /exec) ★★★ */
+var CONFIG={
+  GAS_URL:"https://script.google.com/macros/s/AKfycbzuJrVNTOlgpawOaMgXcAuT4k4Y_yg6Qb7RgNnhsjpViLwIFSLx9PW6j7PWazZosNgU/exec",
+  ADMIN_PIN:"1234", PP:"MSP69-", PT:"MSP69T|"
+};
 
 var NAMES=["ซุ้มประตูทางเข้า ในความทรงจำ","ลานเมฆขาวต้อนรับ","โถงแห่งความทรงจำ","ห้องฉายภาพยนตร์ 3 มิติ","นิทรรศการในหลวงรักเรา","ห้องเรื่องของพ่อในบ้านของเรา","โซนน้ำคือชีวิต","โซนดินคือชีวิต","โซนป่าคือชีวิต","นวัตกรรมเกษตรเศรษฐกิจพอเพียง","บ้านดินมหัศจรรย์","สวนสมุนไพรไทย","นาข้าวสาธิต","ลานนวดข้าวภูมิปัญญา","บ้านต้นไม้แห่งความสุข","โซนเกษตรอินทรีย์วิถีไทย","โรงเรือนผักปลอดภัย","ลานเพาะกล้าไม้","บ่อปลาพอเพียง","เล้าไก่ไข่อารมณ์ดี","โซนปุ๋ยหมักชีวภาพ","พิพิธภัณฑ์มหัศจรรย์พันธุกรรม","โซนเกษตรพอเพียงเมือง","ตลาดนัดเศรษฐกิจพอเพียง","ลานวัฒนธรรมพื้นบ้าน","เวทีการแสดงกลางงาน","โซนหัตถกรรมภูมิปัญญา","ลานกิจกรรมเด็กและครอบครัว","จุดชมวิวทุ่งหญ้าเมฆลอย","ศาลาพักใจริมน้ำ","หอเทิดพระเกียรติ ร.9","ห้องทรงงานจำลอง","นิทรรศการในความทรงจำ ชั้น 2","โดมภาพยนตร์ดวงดาวแห่งความทรงจำ","ห้องสมุดแห่งแผ่นดิน","โซนโครงการหลวงบนดอยสูง","ฝายชะลอน้ำจำลอง","แปลงเกษตรทฤษฎีใหม่","หอคอยเมฆา ชมวิว 360 องศา","บูธกิจกรรมหลัก ศูนย์แลกของที่ระลึก"];
 var POINTS=[];
@@ -251,14 +256,35 @@ var REWARDS=[{id:"silver",name:"เหรียญเงิน",cost:50,ico:"�
 var S;
 try{S=JSON.parse(localStorage.getItem("msp69"));}catch(e){S=null;}
 if(!S){S={uid:"U"+Date.now().toString(36).toUpperCase(),scanned:[],tickets:[],survey:null,spent:0};}
+if(!S.pending){S.pending=[];}
 function save(){try{localStorage.setItem("msp69",JSON.stringify(S));}catch(e){}}
 function g(id){return document.getElementById(id);}
 function earned(){var t=0;for(var i=0;i<S.scanned.length;i++)t+=S.scanned[i].pts;return t;}
 function balance(){return earned()-S.spent;}
-function toast(m){var t=g("toast");t.textContent=m;t.className="show";clearTimeout(t._);t._=setTimeout(function(){t.className="";},2600);}
+function toast(m){var t=g("toast");t.textContent=m;t.className="show";clearTimeout(t._);t._=setTimeout(function(){t.className="";},3000);}
 function openM(id){g(id).className="modal show";}
 function closeM(id){g(id).className="modal";}
 function goPoints(){g("pointList").scrollIntoView({behavior:"smooth"});}
+
+/* ===== ตัวเชื่อม Google Sheet แบบ JSONP ===== */
+var cbSeq=0;
+function api(params,onOk,onFail){
+  if(!CONFIG.GAS_URL){onFail&&onFail("ยังไม่ได้ใส่ GAS_URL ในโค้ด");return;}
+  var name="mspcb"+(cbSeq++)+"_"+Date.now();
+  var s=document.createElement("script"),done=false;
+  function cleanup(){clearTimeout(tm);try{delete window[name];}catch(e){window[name]=null;}if(s.parentNode)s.parentNode.removeChild(s);}
+  var tm=setTimeout(function(){if(done)return;done=true;cleanup();onFail&&onFail("หมดเวลาเชื่อมต่อ (เน็ตช้า หรือ URL ผิด)");},20000);
+  window[name]=function(res){if(done)return;done=true;cleanup();onOk&&onOk(res);};
+  params.callback=name;params.t=Date.now();
+  var q=[];for(var k in params){var v=params[k];q.push(encodeURIComponent(k)+"="+encodeURIComponent(v==null?"":String(v)));}
+  s.src=CONFIG.GAS_URL+"?"+q.join("&");
+  s.onerror=function(){if(done)return;done=true;cleanup();onFail&&onFail("เชื่อมต่อไม่สำเร็จ — ตรวจ URL และสิทธิ์ Anyone");};
+  document.body.appendChild(s);
+}
+function testConn(){
+  toast("⏳ กำลังทดสอบการเชื่อมต่อ...");
+  api({action:"test"},function(r){toast(r&&r.ok?"✅ "+r.msg:"❌ เชื่อมต่อไม่สำเร็จ");},function(e){toast("❌ "+e);});
+}
 
 var FILTER="all";
 function setFilter(f){FILTER=f;g("f-all").className="f";g("f-todo").className="f";g("f-done").className="f";g("f-"+f).className="f active";renderPoints();}
@@ -267,6 +293,7 @@ function switchTab(t){
   g("tb-rewards").className=t==="rewards"?"tab active":"tab";
   g("tab-points").style.display=t==="points"?"flex":"none";
   g("tab-rewards").style.display=t==="rewards"?"flex":"none";
+  if(t==="rewards")syncTickets(true);
 }
 function switchAdmin(t){
   var a=["verify","gen","log"];
@@ -313,13 +340,36 @@ function renderRewards(){
     h+='<div class="rw"><div class="rw-ico" style="background:'+r.bg+'">'+r.ico+'</div><div class="rw-info"><b>'+r.name+'</b><small>ใช้ '+r.cost+' คะแนน</small></div><button '+(ok?"":"disabled")+' onclick="startRedeem(\''+r.id+'\')">'+(ok?"แลกเลย":"คะแนนไม่พอ")+'</button></div>';}
   g("rewardList").innerHTML=h;
 }
-function getRw(id){for(var i=0;i<REWARDS.length;i++)if(REWARDS[i].id===id)return REWARDS[i];return {name:id,ico:"🎁",bg:"#eee"};}
+function getRw(id){for(var i=0;i<REWARDS.length;i++)if(REWARDS[i].id===id)return REWARDS[i];return {id:id,name:id,ico:"🎁",bg:"#eee",cost:0};}
 function renderTickets(){
   if(!S.tickets.length){g("ticketList").innerHTML='<div class="empty"><div class="big">🎫</div>ยังไม่มีบัตรรับของรางวัล</div>';return;}
-  var h="";
+  var h='<button class="f" style="margin-bottom:10px" onclick="syncTickets()">🔄 อัปเดตสถานะล่าสุด</button>';
   for(var i=0;i<S.tickets.length;i++){var t=S.tickets[i],r=getRw(t.reward);
-    h+='<div class="tk"><div class="rw-ico" style="background:'+r.bg+';width:44px;height:44px;font-size:22px">'+r.ico+'</div><div class="rw-info"><b>'+r.name+'</b><small>รหัส '+t.code+'</small></div><div><span class="tk-s '+(t.confirmed?"s-ok":"s-wait")+'">'+(t.confirmed?"รับแล้ว":"รอรับของ")+'</span><br><button onclick="showTicket(\''+t.code+'\')" style="margin-top:6px">แสดง QR</button></div></div>';}
+    h+='<div class="tk"><div class="rw-ico" style="background:'+r.bg+';width:44px;height:44px;font-size:22px">'+r.ico+'</div><div class="rw-info"><b>'+r.name+'</b><small>รหัส '+t.code+'</small></div><div><span class="tk-s '+(t.confirmed?"s-ok":"s-wait")+'">'+(t.confirmed?"✅ รับของแล้ว":"⏳ รอรับของ")+'</span><br><button onclick="showTicket(\''+t.code+'\')" style="margin-top:6px">แสดง QR</button></div></div>';}
   g("ticketList").innerHTML=h;
+}
+
+/* ===== ผู้เล่นคอยเช็กสถานะจาก Sheet ===== */
+var curTicket="";
+function syncTickets(silent){
+  if(!CONFIG.GAS_URL||!S.tickets.length)return;
+  if(!silent)toast("⏳ กำลังอัปเดตสถานะ...");
+  api({action:"check",uid:S.uid},function(res){
+    if(!res||!res.ok||!res.tickets)return;
+    var changed=false;
+    for(var i=0;i<res.tickets.length;i++){
+      for(var j=0;j<S.tickets.length;j++){
+        if(S.tickets[j].code===res.tickets[i].code && res.tickets[i].status==="รับแล้ว" && !S.tickets[j].confirmed){
+          S.tickets[j].confirmed=true;changed=true;
+        }
+      }
+    }
+    if(changed){
+      save();render();
+      if(curTicket&&g("mdTicket").className.indexOf("show")>-1)showTicket(curTicket);
+      toast("🎉 เจ้าหน้าที่ยืนยันการรับของเรียบร้อยแล้ว!");
+    }else if(!silent){toast("สถานะเป็นปัจจุบันแล้ว");}
+  },function(e){if(!silent)toast("❌ "+e);});
 }
 
 var qr=null,MODE="checkin";
@@ -366,7 +416,7 @@ function submitSurvey(e){
   var f=e.target;
   S.survey={fullname:f.fullname.value,age:f.age.value,address:f.address.value,
     travel:f.travel.value,shuttle:f.shuttle.value,visits:f.visits.value,
-    satisfaction:satVal,suggest:f.suggest.value||"-"};
+    satisfaction:satVal,suggest:(f.suggest.value||"-").substring(0,300)};
   save();closeM("mdSurvey");doRedeem();return false;
 }
 function doRedeem(){
@@ -374,21 +424,36 @@ function doRedeem(){
   var code=r.id.substring(0,2).toUpperCase()+Date.now().toString(36).slice(-5).toUpperCase();
   S.spent+=r.cost;
   S.tickets.push({reward:r.id,code:code,confirmed:false,time:new Date().toLocaleString("th-TH")});
-  save();render();sendSheet(r,code);showTicket(code);toast("🎉 แลก "+r.name+" สำเร็จ!");
+  save();render();showTicket(code);
+  sendSheet(r,code);
+}
+function sendSheet(r,code){
+  if(!CONFIG.GAS_URL){toast("⚠️ ยังไม่ได้เชื่อม Google Sheet");return;}
+  var d={action:"redeem",uid:S.uid,reward:r.name,cost:r.cost,code:code,
+    totalScan:S.scanned.length,totalEarn:earned()};
+  for(var k in S.survey)d[k]=S.survey[k];
+  toast("⏳ กำลังบันทึกข้อมูล...");
+  api(d,function(res){
+    if(res&&res.ok)toast("🎉 แลก "+r.name+" สำเร็จ · บันทึกข้อมูลแล้ว");
+    else toast("⚠️ บันทึกไม่สำเร็จ: "+((res&&res.error)||"ไม่ทราบสาเหตุ"));
+  },function(err){
+    S.pending.push(d);save();
+    toast("⚠️ ส่งข้อมูลไม่สำเร็จ ("+err+") จะลองส่งใหม่อัตโนมัติ");
+  });
+}
+function retryPending(){
+  if(!CONFIG.GAS_URL||!S.pending.length)return;
+  var d=S.pending[0];
+  api(d,function(res){if(res&&res.ok){S.pending.shift();save();toast("✅ ส่งข้อมูลที่ค้างสำเร็จแล้ว");}},function(){});
 }
 function showTicket(code){
   var t=null;for(var i=0;i<S.tickets.length;i++)if(S.tickets[i].code===code)t=S.tickets[i];
   if(!t)return;
+  curTicket=code;
   var r=getRw(t.reward);
-  g("ticketBody").innerHTML='<div class="rw-ico" style="margin:0 auto 10px;background:'+r.bg+';width:70px;height:70px;font-size:36px">'+r.ico+'</div><b style="font-size:19px">'+r.name+'</b><p class="muted">แสดง QR นี้ให้เจ้าหน้าที่สแกน</p><div id="tkQR" style="display:flex;justify-content:center;background:#fff;padding:16px;border-radius:20px"></div><p style="margin-top:10px;font-weight:700">รหัส '+t.code+'</p><span class="tk-s '+(t.confirmed?"s-ok":"s-wait")+'">'+(t.confirmed?"รับของแล้ว":"รอรับของ")+'</span>';
+  g("ticketBody").innerHTML='<div class="rw-ico" style="margin:0 auto 10px;background:'+r.bg+';width:70px;height:70px;font-size:36px">'+r.ico+'</div><b style="font-size:19px">'+r.name+'</b><p class="muted">'+(t.confirmed?"รับของเรียบร้อยแล้ว ขอบคุณที่ร่วมสนุก":"แสดง QR นี้ให้เจ้าหน้าที่สแกน")+'</p><div id="tkQR" style="display:flex;justify-content:center;background:#fff;padding:16px;border-radius:20px"></div><p style="margin-top:10px;font-weight:700">รหัส '+t.code+'</p><span class="tk-s '+(t.confirmed?"s-ok":"s-wait")+'">'+(t.confirmed?"✅ รับของแล้ว":"⏳ รอรับของ")+'</span>';
   g("tkQR").appendChild(qrImg(CONFIG.PT+S.uid+"|"+t.reward+"|"+t.code,200));
   openM("mdTicket");
-}
-function sendSheet(r,code){
-  if(!CONFIG.GAS_URL)return;
-  var d={action:"redeem",uid:S.uid,reward:r.name,cost:r.cost,code:code,totalScan:S.scanned.length,totalEarn:earned()};
-  for(var k in S.survey)d[k]=S.survey[k];
-  try{fetch(CONFIG.GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)});}catch(e){}
 }
 
 function adminLogin(){
@@ -409,32 +474,54 @@ function buildQR(){
 function adminVerify(txt){
   if(txt.indexOf(CONFIG.PT)!==0)return toast("❌ ไม่ใช่บัตรรับของรางวัล");
   var a=txt.split("|"),uid=a[1],rw=a[2],code=a[3],r=getRw(rw);
-  for(var i=0;i<LOG.length;i++)if(LOG[i].code===code)return toast("⚠️ บัตรนี้ยืนยันไปแล้ว");
-  g("verifyResult").innerHTML='<div class="vr"><b style="font-size:17px">'+r.ico+' '+r.name+'</b><p class="muted">รหัสบัตร: '+code+'<br>ผู้เล่น: '+uid+'</p><button class="primary" onclick="confirmGive(\''+uid+'\',\''+rw+'\',\''+code+'\')">✅ ยืนยันการรับของที่ระลึก</button></div>';
+  g("verifyResult").innerHTML='<div class="vr"><b style="font-size:17px">'+r.ico+' '+r.name+'</b><p class="muted">รหัสบัตร: '+code+'<br>ผู้เล่น: '+uid+'</p><button class="primary" id="btnGive" onclick="confirmGive(\''+uid+'\',\''+rw+'\',\''+code+'\')">✅ ยืนยันการรับของที่ระลึก</button></div>';
 }
 function confirmGive(uid,rw,code){
+  var r=getRw(rw),btn=g("btnGive");
+  if(btn){btn.disabled=true;btn.textContent="⏳ กำลังยืนยัน...";}
+  if(!CONFIG.GAS_URL){toast("⚠️ ยังไม่ได้เชื่อม Sheet — ยืนยันได้เฉพาะเครื่องนี้");localGive(uid,rw,code);return;}
+  api({action:"confirm",code:code,uid:uid},function(res){
+    if(res&&res.ok&&res.confirmed){
+      localGive(uid,rw,code,res.name);
+      toast("✅ ยืนยันสำเร็จ");
+    }else if(res&&res.already){
+      g("verifyResult").innerHTML='<div class="vr" style="text-align:center"><div style="font-size:44px">⚠️</div><b>บัตรนี้ถูกใช้ไปแล้ว</b><p class="muted">'+(res.reward||"")+' · '+code+'<br>ผู้รับ: '+(res.name||"-")+'</p></div>';
+      toast("⚠️ บัตรนี้ยืนยันไปแล้ว");
+    }else{
+      g("verifyResult").innerHTML='<div class="vr" style="text-align:center"><div style="font-size:44px">❌</div><b>ยืนยันไม่สำเร็จ</b><p class="muted">'+((res&&res.error)||"ไม่พบบัตรในระบบ")+'</p><button class="primary" onclick="startScan(\'admin\')">สแกนใหม่</button></div>';
+    }
+  },function(err){
+    if(btn){btn.disabled=false;btn.textContent="✅ ยืนยันการรับของที่ระลึก";}
+    toast("❌ "+err);
+  });
+}
+function localGive(uid,rw,code,name){
   var r=getRw(rw);
-  LOG.push({code:code,reward:r.name,uid:uid,time:new Date().toLocaleString("th-TH")});
+  LOG.push({code:code,reward:r.name,uid:uid,name:name||"",time:new Date().toLocaleString("th-TH")});
   try{localStorage.setItem("msp69log",JSON.stringify(LOG));}catch(e){}
   for(var i=0;i<S.tickets.length;i++)if(S.tickets[i].code===code){S.tickets[i].confirmed=true;save();render();}
-  if(CONFIG.GAS_URL){try{fetch(CONFIG.GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"confirm",uid:uid,code:code,reward:r.name})});}catch(e){}}
-  g("verifyResult").innerHTML='<div class="vr" style="text-align:center"><div style="font-size:44px">✅</div><b>ยืนยันสำเร็จ</b><p class="muted">'+r.name+' · '+code+'</p></div>';
-  renderLog();toast("ยืนยันการรับของเรียบร้อย");
+  g("verifyResult").innerHTML='<div class="vr" style="text-align:center"><div style="font-size:44px">✅</div><b>ยืนยันสำเร็จ</b><p class="muted">'+r.name+' · '+code+(name?'<br>ผู้รับ: '+name:'')+'</p><button class="primary" onclick="startScan(\'admin\')">📷 สแกนใบถัดไป</button></div>';
+  renderLog();
 }
 function renderLog(){
   if(!LOG.length){g("adminLog").innerHTML='<div class="empty"><div class="big">📋</div>ยังไม่มีการยืนยันรับของ</div>';return;}
   var h="";for(var i=LOG.length-1;i>=0;i--){var l=LOG[i];
-    h+='<div class="his"><div><b>'+l.reward+'</b><br><small>'+l.code+' · '+l.time+'</small></div><span class="tk-s s-ok">รับแล้ว</span></div>';}
+    h+='<div class="his"><div><b>'+l.reward+'</b><br><small>'+l.code+(l.name?' · '+l.name:'')+' · '+l.time+'</small></div><span class="tk-s s-ok">รับแล้ว</span></div>';}
   g("adminLog").innerHTML=h;
 }
 
-/* เริ่มระบบ */
-var sh="";var SATS=["มากที่สุด","มาก","พอใช้","น้อย","น้อยที่สุด"];
+/* ===== เริ่มระบบ ===== */
+var sh="",SATS=["มากที่สุด","มาก","พอใช้","น้อย","น้อยที่สุด"];
 for(var s=0;s<SATS.length;s++)sh+='<button type="button" onclick="setSat(this,\''+SATS[s]+'\')">'+SATS[s]+'</button>';
 g("satBox").innerHTML=sh;
 g("adminPin").addEventListener("keydown",function(e){if(e.key==="Enter")adminLogin();});
+g("atab-verify").insertAdjacentHTML("afterbegin",'<button class="f" style="margin-bottom:10px" onclick="testConn()">🔌 ทดสอบการเชื่อมต่อ Google Sheet</button>');
 g("jsflag").style.display="block";
+g("jsflag").textContent = CONFIG.GAS_URL ? "✅ ระบบพร้อมใช้งาน · เชื่อมต่อ Google Sheet แล้ว" : "⚠️ ระบบพร้อมใช้ แต่ยังไม่ได้ใส่ GAS_URL";
 render();
+setInterval(function(){syncTickets(true);},8000);
+setInterval(retryPending,20000);
+syncTickets(true);
 </script>
 </body>
 </html>
