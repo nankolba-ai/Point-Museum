@@ -91,6 +91,24 @@ legend{font-size:14.5px;font-weight:600;padding:0 6px}
 .sat{display:flex;gap:6px;flex-wrap:wrap}
 .sat button{flex:1;min-width:62px;border:1px solid #cfe3f3;background:#fff;border-radius:14px;padding:10px 4px;font-family:inherit;font-size:13px;font-weight:600;color:#6b93bb;cursor:pointer}
 .sat button.on{background:#2f7fd4;color:#fff;border-color:#2f7fd4}
+
+/* Highlight Box */
+.highlight-box{padding:16px;border-left:5px solid #2f7fd4;background:rgba(255,255,255,.7)}
+.highlight-box h4{font-size:15px;color:#1c5a9e;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.hl-item{font-size:13.5px;color:#335c88;margin-bottom:6px;line-height:1.4}
+.hl-item b{color:#17406e}
+
+/* Popup คะแนนกลางจอ & ดาวกระจาย */
+.modal-center{align-items:center!important}
+.pop-card{background:#fff;border-radius:30px;padding:30px 20px;width:86%;max-width:340px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.2);animation:popIn .3s ease;position:relative;overflow:hidden}
+@keyframes popIn{0%{transform:scale(0.7);opacity:0}100%{transform:scale(1);opacity:1}}
+.pop-ico{font-size:60px;margin-bottom:10px;animation:bounce 1s infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.pop-title{font-size:16px;color:#6b93bb;font-weight:600}
+.pop-score{font-size:46px;font-weight:800;color:#2f7fd4;margin:5px 0 15px}
+.star{position:absolute;font-size:24px;animation:flyStar 0.8s forwards linear;pointer-events:none}
+@keyframes flyStar{0%{transform:translate(0,0) scale(0.5);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(1.4);opacity:0}}
+
 .admin-foot{padding:16px;text-align:center}
 .admin-title{font-size:14px;font-weight:700;color:#6b93bb;margin-bottom:10px}
 .admin-row{display:flex;gap:8px}
@@ -109,7 +127,7 @@ legend{font-size:14.5px;font-weight:600;padding:0 6px}
 </style>
 </head>
 <body>
-<div id="jsflag">✅ ระบบพร้อมใช้งาน (JavaScript ทำงานปกติ)</div>
+<div id="jsflag">✅ ระบบพร้อมใช้งาน · เชื่อมต่อ Google Sheet แล้ว</div>
 <div id="errbox"></div>
 
 <div class="app">
@@ -170,6 +188,14 @@ legend{font-size:14.5px;font-weight:600;padding:0 6px}
     </div>
   </section>
 
+  <!-- พื้นที่ประชาสัมพันธ์ไฮไลท์งาน -->
+  <div class="glass highlight-box">
+    <h4>📢 ไฮไลท์งาน วันที่ 13 ตุลาคม 2569</h4>
+    <div class="hl-item">⏰ <b>08.00 น.</b> ทำบุญตักบาตร ข้าวสารอาหารแห้ง</div>
+    <div class="hl-item" style="margin-bottom:10px">⏰ <b>15.52 น.</b> กิจกรรมน้อมรำลึก</div>
+    <div class="hl-item">📢 <b>กิจกรรมประกวดภาพถ่ายในความทรงจำ</b><br>ชิงรางวัลกว่า 5,000 บาท</div>
+  </div>
+
   <footer class="glass admin-foot">
     <div class="admin-title">🔐 สำหรับเจ้าหน้าที่ (Admin)</div>
     <div class="admin-row">
@@ -185,8 +211,18 @@ legend{font-size:14.5px;font-weight:600;padding:0 6px}
   <div class="sheet-head"><h3 id="scanTitle">สแกน QR Code</h3><button class="x" onclick="closeScan()">✕</button></div>
   <div id="reader"></div>
   <div class="scan-hint" id="scanHint">หันกล้องไปที่ QR Code ประจำจุด</div>
-  <div class="manual"><input id="manualCode" placeholder="หรือกรอกรหัส เช่น MSP69-P01"><button onclick="useManual()">ยืนยัน</button></div>
+  <div class="manual"><input id="manualCode" placeholder="หรือกรอกรหัสลับประจำจุด"><button onclick="useManual()">ยืนยัน</button></div>
 </div></div>
+
+<!-- Popup แสดงคะแนนกลางจอ -->
+<div class="modal modal-center" id="mdPopup">
+  <div class="pop-card" id="popCard">
+    <div class="pop-ico">🎉</div>
+    <div class="pop-title" id="popName">เช็คอินสำเร็จ!</div>
+    <div class="pop-score" id="popPts">+5 คะแนน</div>
+    <button class="primary" onclick="closePopup()">ตกลง</button>
+  </div>
+</div>
 
 <div class="modal" id="mdSurvey"><div class="sheet">
   <div class="sheet-head"><h3>📝 แบบสอบถามก่อนรับของรางวัล</h3><button class="x" onclick="closeM('mdSurvey')">✕</button></div>
@@ -216,7 +252,7 @@ legend{font-size:14.5px;font-weight:600;padding:0 6px}
 </div></div>
 
 <div class="modal" id="mdAdmin"><div class="sheet">
-  <div class="sheet-head"><h3>🛠️ ระบบเจ้าหน้าที่</h3><button class="x" onclick="closeM('mdAdmin')">✕</button></div>
+  <div class="sheet-head"><h3>🛠️ ระบบเจ้าหน้าที่</h3><button class="x" onclick="closeAdmin()">✕</button></div>
   <div class="tabs inner">
     <button class="tab active" id="at-verify" onclick="switchAdmin('verify')">✅ ยืนยันรับของ</button>
     <button class="tab" id="at-gen" onclick="switchAdmin('gen')">🖨️ สร้าง QR</button>
@@ -247,8 +283,21 @@ var CONFIG={
 };
 
 var NAMES=["ซุ้มประตูทางเข้า ในความทรงจำ","ลานเมฆขาวต้อนรับ","โถงแห่งความทรงจำ","ห้องฉายภาพยนตร์ 3 มิติ","นิทรรศการในหลวงรักเรา","ห้องเรื่องของพ่อในบ้านของเรา","โซนน้ำคือชีวิต","โซนดินคือชีวิต","โซนป่าคือชีวิต","นวัตกรรมเกษตรเศรษฐกิจพอเพียง","บ้านดินมหัศจรรย์","สวนสมุนไพรไทย","นาข้าวสาธิต","ลานนวดข้าวภูมิปัญญา","บ้านต้นไม้แห่งความสุข","โซนเกษตรอินทรีย์วิถีไทย","โรงเรือนผักปลอดภัย","ลานเพาะกล้าไม้","บ่อปลาพอเพียง","เล้าไก่ไข่อารมณ์ดี","โซนปุ๋ยหมักชีวภาพ","พิพิธภัณฑ์มหัศจรรย์พันธุกรรม","โซนเกษตรพอเพียงเมือง","ตลาดนัดเศรษฐกิจพอเพียง","ลานวัฒนธรรมพื้นบ้าน","เวทีการแสดงกลางงาน","โซนหัตถกรรมภูมิปัญญา","ลานกิจกรรมเด็กและครอบครัว","จุดชมวิวทุ่งหญ้าเมฆลอย","ศาลาพักใจริมน้ำ","หอเทิดพระเกียรติ ร.9","ห้องทรงงานจำลอง","นิทรรศการ ในความทรงจำ ชั้น 2","โดมภาพยนตร์ดวงดาวแห่งความทรงจำ","ห้องสมุดแห่งแผ่นดิน","โซนโครงการหลวงบนดอยสูง","ฝายชะลอน้ำจำลอง","แปลงเกษตรทฤษฎีใหม่","หอคอยเมฆา ชมวิว 360 องศา","บูธกิจกรรมหลัก ศูนย์แลกของที่ระลึก"];
+
+// สร้างรหัสลับสุ่มเฉพาะจุด ป้องกันการเดา (แต่ระบบจำแนกอัตโนมัติ)
+var SECRETS = ["K9m#8X","p2L$7q","R4w!9N","b6H%2v","t1Y&5m","f8C*3x","D3j(6z","m7P)4k","V9s#1w","q5L$8r","x2N!6t","H4v%9m","J8b&2p","k1X*7q","L6m(3n","Z9c)5v","w3R#1x","n8H$4k","y2T!9m","c5V%6p","b7N&8x","v1M*2q","m4K(3t","x9L#5r","z6J$1n","h3P!7v","n2R%4m","k8X&9x","p5C*1q","m1V(6t","t7N#3k","r4H$8m","q9Z!2p","x3L%5v","n6K&1x","b2M*7q","h8P(4t","z1R#9m","v5N$2k","m9X!6v"];
+
 var POINTS=[];
-for(var i=0;i<NAMES.length;i++){POINTS.push({id:"P"+("0"+(i+1)).slice(-2),no:i+1,name:NAMES[i],pts:i<30?5:15});}
+for(var i=0;i<NAMES.length;i++){
+  POINTS.push({
+    id:"P"+("0"+(i+1)).slice(-2),
+    code: CONFIG.PP + SECRETS[i], // รหัส QR ประจำจุดแบบสุ่มยากต่อการเดา
+    no:i+1,
+    name:NAMES[i],
+    pts:i<30?5:15
+  });
+}
+
 var REWARDS=[{id:"silver",name:"เหรียญเงิน",cost:50,ico:"🥈",bg:"linear-gradient(145deg,#e8eef5,#b9c7d6)"},{id:"gold",name:"เหรียญทอง",cost:100,ico:"🥇",bg:"linear-gradient(145deg,#ffe9a8,#f0b429)"},{id:"diamond",name:"เพชร",cost:200,ico:"💎",bg:"linear-gradient(145deg,#d9f2ff,#7cc4f5)"},{id:"supernova",name:"ซุปเปอร์โนว่า",cost:300,ico:"🌟",bg:"linear-gradient(145deg,#ffd6f0,#b07cf5)"}];
 
 var S;
@@ -264,23 +313,61 @@ function openM(id){g(id).className="modal show";}
 function closeM(id){g(id).className="modal";}
 function goPoints(){g("pointList").scrollIntoView({behavior:"smooth"});}
 
-/* ===== ฟังก์ชันส่งข้อมูลผ่าน iframe ป้องกัน Script Error ===== */
+/* ===== เสียงเหรียญ & เอฟเฟกต์ดาวกระจาย ===== */
+function playCoinSound(){
+  try{
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(987.77, ctx.currentTime);
+    osc.frequency.setValueAtTime(1318.51, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + 0.4);
+  }catch(e){}
+}
+
+function triggerStars(){
+  var card = g("popCard");
+  for(var i=0; i<12; i++){
+    var star = document.createElement("div");
+    star.className = "star";
+    star.innerHTML = "⭐";
+    var angle = Math.random() * Math.PI * 2;
+    var dist = 80 + Math.random() * 80;
+    star.style.setProperty("--tx", Math.cos(angle)*dist + "px");
+    star.style.setProperty("--ty", Math.sin(angle)*dist + "px");
+    star.style.left = "50%"; star.style.top = "40%";
+    card.appendChild(star);
+    setTimeout(function(s){ s.remove(); }, 800, star);
+  }
+}
+
+function showPopup(name, pts){
+  playCoinSound();
+  g("popName").textContent = name;
+  g("popPts").textContent = "+" + pts + " คะแนน";
+  openM("mdPopup");
+  triggerStars();
+}
+function closePopup(){ closeM("mdPopup"); }
+
+/* ===== ส่งข้อมูลผ่าน iframe ===== */
 function sendToBeacon(d,onSuccess){
   if(!CONFIG.GAS_URL)return;
   var iframeName="gas_iframe_"+Date.now();
   var iframe=document.createElement("iframe");
   iframe.name=iframeName;iframe.style.display="none";
   document.body.appendChild(iframe);
-  
   var form=document.createElement("form");
   form.method="POST";form.action=CONFIG.GAS_URL;form.target=iframeName;
-  
   var input=document.createElement("input");
   input.type="hidden";input.name="data";input.value=JSON.stringify(d);
   form.appendChild(input);
   document.body.appendChild(form);
   form.submit();
-  
   setTimeout(function(){
     try{document.body.removeChild(form);document.body.removeChild(iframe);}catch(e){}
     onSuccess&&onSuccess();
@@ -354,28 +441,37 @@ function startScan(mode){
   MODE=mode;
   g("scanTitle").textContent=mode==="admin"?"สแกนบัตรรับของรางวัล":"สแกน QR Code เช็คอิน";
   g("scanHint").textContent=mode==="admin"?"หันกล้องไปที่ QR บัตรของผู้ร่วมสนุก":"หันกล้องไปที่ QR Code ประจำจุด";
+  if(mode==="admin"){ closeM("mdAdmin"); }
   openM("mdScan");
   if(typeof Html5Qrcode==="undefined"){toast("โหลดตัวอ่าน QR ไม่ได้ ใช้ช่องกรอกรหัสแทนได้");return;}
   qr=new Html5Qrcode("reader");
   qr.start({facingMode:"environment"},{fps:10,qrbox:{width:230,height:230}},
-    function(txt){stopScan();closeM("mdScan");handleCode(txt);},function(){})
+    function(txt){stopScan();closeScan();handleCode(txt);},function(){})
    .catch(function(){toast("เปิดกล้องไม่ได้ — ต้องเปิดผ่าน https และกดอนุญาตกล้อง");});
 }
 function stopScan(){if(qr){try{qr.stop().then(function(){qr.clear();});}catch(e){}qr=null;}}
-function closeScan(){stopScan();closeM("mdScan");}
-function useManual(){var v=g("manualCode").value;if(!v)return;g("manualCode").value="";stopScan();closeM("mdScan");handleCode(v);}
+function closeScan(){
+  stopScan();
+  closeM("mdScan");
+  if(MODE==="admin"){ openM("mdAdmin"); }
+}
+function closeAdmin(){ closeM("mdAdmin"); }
+function useManual(){var v=g("manualCode").value.trim();if(!v)return;g("manualCode").value="";stopScan();closeScan();handleCode(v);}
 function handleCode(txt){
   txt=(txt||"").trim();
   if(MODE==="admin")return adminVerify(txt);
-  var code=txt.toUpperCase();
-  if(code.indexOf(CONFIG.PP)>-1)code=CONFIG.PP+code.split(CONFIG.PP)[1].substring(0,3);
-  else if(/^P\d{2}$/.test(code))code=CONFIG.PP+code;
+  
   var p=null;
-  for(var i=0;i<POINTS.length;i++)if(CONFIG.PP+POINTS[i].id===code)p=POINTS[i];
-  if(!p)return toast("❌ QR นี้ไม่ใช่จุดเช็คอินของกิจกรรม");
+  for(var i=0;i<POINTS.length;i++){
+    if(POINTS[i].code.toUpperCase() === txt.toUpperCase() || POINTS[i].id.toUpperCase() === txt.toUpperCase()){
+      p = POINTS[i]; break;
+    }
+  }
+  if(!p)return toast("❌ QR Code นี้ไม่ถูกต้อง");
   if(isDone(p.id))return toast("⚠️ จุดนี้สแกนไปแล้ว");
   S.scanned.push({id:p.id,no:p.no,name:p.name,pts:p.pts,time:new Date().toLocaleString("th-TH")});
-  save();render();toast("✅ "+p.name+" +"+p.pts+" คะแนน");
+  save();render();
+  showPopup(p.name, p.pts);
 }
 
 var pendingReward=null,satVal="";
@@ -433,9 +529,9 @@ function buildQR(){
   var gr=g("qrGrid");if(gr.getAttribute("data-built"))return;gr.setAttribute("data-built","1");
   for(var i=0;i<POINTS.length;i++){var p=POINTS[i];
     var d=document.createElement("div");d.className="qr-item";
-    d.appendChild(qrImg(CONFIG.PP+p.id,120));
+    d.appendChild(qrImg(p.code,120)); // ใช้รหัสลับสุ่มประจำจุดในการสร้าง QR
     var n=document.createElement("div");n.className="n";n.innerHTML="จุดที่ "+p.no+" · "+p.pts+" คะแนน<br>"+p.name;d.appendChild(n);
-    var c=document.createElement("div");c.className="c";c.textContent=CONFIG.PP+p.id;d.appendChild(c);
+    var c=document.createElement("div");c.className="c";c.textContent=p.code;d.appendChild(c);
     gr.appendChild(d);}
 }
 function adminVerify(txt){
@@ -475,3 +571,5 @@ g("jsflag").style.display="block";
 g("jsflag").textContent="✅ ระบบพร้อมใช้งาน · เชื่อมต่อ Google Sheet แล้ว";
 render();
 </script>
+</body>
+</html>
