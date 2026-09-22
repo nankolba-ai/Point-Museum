@@ -171,10 +171,6 @@ legend{font-size:14.5px;font-weight:600;padding:0 6px}
       </div>
       <div id="pointList" class="point-list"></div>
     </div>
-    <div class="glass card">
-      <div class="sec-head"><h3>🕘 ประวัติการสแกนเช็คอิน</h3><span class="count" id="hisCount">0 รายการ</span></div>
-      <div id="history"></div>
-    </div>
   </section>
 
   <section id="tab-rewards" style="display:none;flex-direction:column;gap:14px">
@@ -469,9 +465,8 @@ function render(){
   g("scanCount").textContent="สแกนแล้ว "+S.scanned.length+" จุด";
   g("barFill").style.width=(S.scanned.length/POINTS.length*100)+"%";
   g("ptDone").textContent=S.scanned.length+"/"+POINTS.length;
-  g("hisCount").textContent=S.scanned.length+" รายการ";
   g("myBal").textContent=balance()+" คะแนน";
-  renderPoints();renderHistory();renderRewards();renderTickets();
+  renderPoints();renderRewards();renderTickets();
 }
 function isDone(id){for(var i=0;i<S.scanned.length;i++)if(S.scanned[i].id===id)return true;return false;}
 function renderPoints(){
@@ -483,13 +478,6 @@ function renderPoints(){
     h+='<div class="pt '+(d?"done":"")+'"><div class="pt-no">'+(d?"✓":p.no)+'</div><div class="pt-name">'+p.name+'</div><div class="pt-pts">'+p.pts+' คะแนน</div></div>';
   }
   g("pointList").innerHTML=h||'<div class="empty">ไม่มีรายการ</div>';
-}
-function renderHistory(){
-  if(!S.scanned.length){g("history").innerHTML='<div class="empty"><div class="big">☁️</div>ยังไม่มีประวัติการสแกนเช็คอิน<br><small>เริ่มสแกนเพื่อเก็บคะแนนกันเลย!</small></div>';return;}
-  var h="";
-  for(var i=S.scanned.length-1;i>=0;i--){var x=S.scanned[i];
-    h+='<div class="his"><div><b>'+x.no+'. '+x.name+'</b><br><small>'+x.time+'</small></div><div class="pt-pts">+'+x.pts+'</div></div>';}
-  g("history").innerHTML=h;
 }
 function renderRewards(){
   var h="";
