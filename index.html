@@ -247,7 +247,7 @@ legend{font-size:14.5px;font-weight:600;padding:0 6px}
 </div></div>
 
 <div class="modal" id="mdTicket"><div class="sheet center">
-  <div class="sheet-head"><h3>🎫 บัตรรับของรางวัล</h3><button class="x" onclick="closeM('mdTicket')">✕</button></div>
+  <div class="sheet-head"><h3>🎫 บัตรรับของรางวัล</h3><button class="x" onclick="closeTicket()">✕</button></div>
   <div id="ticketBody"></div>
 </div></div>
 
@@ -374,6 +374,76 @@ function sendToBeacon(d,onSuccess){
   },1500);
 }
 
+/* ===== [ADD] อ่านสถานะจาก GAS แบบ JSONP ===== */
+function gasGet(params,cb){
+  if(!CONFIG.GAS_URL){cb&&cb(null);return;}
+  var cbName="gascb_"+Date.now()+"_"+Math.floor(Math.random()*10000);
+  var done=false,sc;
+  function cleanup(){try{document.body.removeChild(sc);}catch(e){}try{delete window[cbName];}catch(e){window[cbName]=null;}}
+  window[cbName]=function(res){if(done)return;done=true;cleanup();cb&&cb(res);};
+  var qs=[];
+  for(var k in params)qs.push(encodeURIComponent(k)+"="+encodeURIComponent(params[k]));
+  qs.push("callback="+cbName);
+  sc=document.createElement("script");
+  sc.src=CONFIG.GAS_URL+"?"+qs.join("&");
+  sc.onerror=function(){if(!done){done=true;cleanup();cb&&cb(null);}};
+  document.body.appendChild(sc);
+  setTimeout(function(){if(!done){done=true;cleanup();cb&&cb(null);}},9000);
+}
+
+/* ===== [ADD] ค้นบันทึกการจ่ายของในเครื่องแอดมิน (กันซ้ำแบบออฟไลน์) ===== */
+function findGiven(code){
+  for(var i=0;i<LOG.length;i++)if(LOG[i].code===code)return LOG[i];
+  return null;
+}
+
+/* ===== [ADD] กล่องแจ้งเตือนว่าบัตรถูกใช้แล้ว ===== */
+function showGivenBox(r,code,uid,time){
+  g("verifyResult").innerHTML='<div class="vr" style="text-align:center;border:2px solid #e11d48;background:#fff1f2">'+
+    '<div style="font-size:44px">⛔</div><b style="color:#e11d48;font-size:17px">บัตรนี้รับของไปแล้ว</b>'+
+    '<p class="muted">'+r.ico+' '+r.name+'<br>รหัสบัตร: '+code+'<br>ผู้เล่น: '+uid+
+    (time?'<br>เวลาที่รับ: '+time:'')+'</p>'+
+    '<button class="primary" onclick="startScan(\'admin\')">📷 สแกนใบถัดไป</button></div>';
+  toast("⛔ บัตรนี้ถูกใช้รับของไปแล้ว");
+}
+
+/* ===== [ADD] ฝั่งผู้เล่น: ดึงสถานะ "รับแล้ว" จากเซิร์ฟเวอร์ ===== */
+function syncTickets(cb){
+  if(!S.tickets||!S.tickets.length){cb&&cb(false);return;}
+  gasGet({action:"status",uid:S.uid},function(res){
+    if(!res||!res.ok||!res.codes){cb&&cb(false);return;}
+    var map={},changed=false,i;
+    for(i=0;i<res.codes.length;i++)map[String(res.codes[i]).toUpperCase()]=1;
+    for(i=0;i<S.tickets.length;i++){
+      if(!S.tickets[i].confirmed&&map[String(S.tickets[i].code).toUpperCase()]){
+        S.tickets[i].confirmed=true;changed=true;
+      }
+    }
+    if(changed){save();render();}
+    cb&&cb(changed);
+  });
+}
+
+/* ===== [ADD] ตรวจสถานะซ้ำ ๆ ขณะเปิดบัตร QR อยู่ ===== */
+var tkPoll=null,tkPollN=0;
+function stopTkPoll(){if(tkPoll){clearInterval(tkPoll);tkPoll=null;}tkPollN=0;}
+function startTkPoll(code){
+  stopTkPoll();
+  tkPoll=setInterval(function(){
+    tkPollN++;
+    if(tkPollN>60){stopTkPoll();return;}
+    syncTickets(function(changed){
+      if(!changed)return;
+      for(var i=0;i<S.tickets.length;i++){
+        if(S.tickets[i].code===code&&S.tickets[i].confirmed){
+          stopTkPoll();showTicket(code);toast("✅ รับของเรียบร้อยแล้ว");
+        }
+      }
+    });
+  },5000);
+}
+function closeTicket(){stopTkPoll();closeM("mdTicket");}
+
 var FILTER="all";
 function setFilter(f){FILTER=f;g("f-all").className="f";g("f-todo").className="f";g("f-done").className="f";g("f-"+f).className="f active";renderPoints();}
 function switchTab(t){
@@ -460,7 +530,7 @@ function useManual(){var v=g("manualCode").value.trim();if(!v)return;g("manualCo
 function handleCode(txt){
   txt=(txt||"").trim();
   if(MODE==="admin")return adminVerify(txt);
-  
+
   var p=null;
   for(var i=0;i<POINTS.length;i++){
     if(POINTS[i].code.toUpperCase() === txt.toUpperCase() || POINTS[i].id.toUpperCase() === txt.toUpperCase()){
@@ -514,8 +584,21 @@ function showTicket(code){
   var t=null;for(var i=0;i<S.tickets.length;i++)if(S.tickets[i].code===code)t=S.tickets[i];
   if(!t)return;
   var r=getRw(t.reward);
-  g("ticketBody").innerHTML='<div class="rw-ico" style="margin:0 auto 10px;background:'+r.bg+';width:70px;height:70px;font-size:36px">'+r.ico+'</div><b style="font-size:19px">'+r.name+'</b><p class="muted">'+(t.confirmed?"รับของเรียบร้อยแล้ว":"แสดง QR นี้ให้เจ้าหน้าที่สแกน")+'</p><div id="tkQR" style="display:flex;justify-content:center;background:#fff;padding:16px;border-radius:20px"></div><p style="margin-top:10px;font-weight:700">รหัส '+t.code+'</p><span class="tk-s '+(t.confirmed?"s-ok":"s-wait")+'">'+(t.confirmed?"✅ รับของแล้ว":"⏳ รอรับของ")+'</span>';
-  g("tkQR").appendChild(qrImg(CONFIG.PT+S.uid+"|"+t.reward+"|"+t.code,200));
+  var body='<div class="rw-ico" style="margin:0 auto 10px;background:'+r.bg+';width:70px;height:70px;font-size:36px">'+r.ico+'</div>'+
+    '<b style="font-size:19px">'+r.name+'</b>'+
+    '<p class="muted">'+(t.confirmed?"รับของเรียบร้อยแล้ว — บัตรนี้ใช้แล้ว":"แสดง QR นี้ให้เจ้าหน้าที่สแกน")+'</p>';
+  if(t.confirmed){
+    body+='<div style="display:flex;justify-content:center;background:#f1f5f9;padding:26px;border-radius:20px;font-size:54px">✅</div>';
+  }else{
+    body+='<div id="tkQR" style="display:flex;justify-content:center;background:#fff;padding:16px;border-radius:20px"></div>';
+  }
+  body+='<p style="margin-top:10px;font-weight:700">รหัส '+t.code+'</p>'+
+    '<span class="tk-s '+(t.confirmed?"s-ok":"s-wait")+'">'+(t.confirmed?"✅ รับของแล้ว":"⏳ รอรับของ")+'</span>';
+  g("ticketBody").innerHTML=body;
+  if(!t.confirmed){
+    g("tkQR").appendChild(qrImg(CONFIG.PT+S.uid+"|"+t.reward+"|"+t.code,200));
+    startTkPoll(code);
+  }else{ stopTkPoll(); }
   openM("mdTicket");
 }
 
@@ -537,21 +620,44 @@ function buildQR(){
 function adminVerify(txt){
   if(txt.indexOf(CONFIG.PT)!==0)return toast("❌ ไม่ใช่บัตรรับของรางวัล");
   var a=txt.split("|"),uid=a[1],rw=a[2],code=a[3],r=getRw(rw);
-  g("verifyResult").innerHTML='<div class="vr"><b style="font-size:17px">'+r.ico+' '+r.name+'</b><p class="muted">รหัสบัตร: '+code+'<br>ผู้เล่น: '+uid+'</p><button class="primary" id="btnGive" onclick="confirmGive(\''+uid+'\',\''+rw+'\',\''+code+'\')">✅ ยืนยันการรับของที่ระลึก</button></div>';
+
+  // 1) เช็คจากบันทึกในเครื่องก่อน (เร็ว + ใช้ได้แม้เน็ตหลุด)
+  var lg=findGiven(code);
+  if(lg)return showGivenBox(r,code,uid,lg.time);
+
+  // 2) เช็คกับเซิร์ฟเวอร์ (กันข้ามเครื่องแอดมิน)
+  g("verifyResult").innerHTML='<div class="vr" style="text-align:center"><div style="font-size:34px">⏳</div><b>กำลังตรวจสอบสถานะบัตร...</b><p class="muted">รหัสบัตร: '+code+'</p></div>';
+  gasGet({action:"check",code:code,uid:uid},function(res){
+    if(res&&res.ok&&res.confirmed){
+      LOG.push({code:code,reward:r.name,uid:uid,time:res.time||"-"});
+      try{localStorage.setItem("msp69log",JSON.stringify(LOG));}catch(e){}
+      renderLog();
+      return showGivenBox(r,code,uid,res.time);
+    }
+    var warn=res?"":'<p class="muted" style="color:#d97706">⚠️ ตรวจสอบกับเซิร์ฟเวอร์ไม่ได้ — กรุณาตรวจสอบก่อนจ่ายของ</p>';
+    g("verifyResult").innerHTML='<div class="vr"><b style="font-size:17px">'+r.ico+' '+r.name+'</b>'+
+      '<p class="muted">รหัสบัตร: '+code+'<br>ผู้เล่น: '+uid+'</p>'+warn+
+      '<button class="primary" id="btnGive" onclick="confirmGive(\''+uid+'\',\''+rw+'\',\''+code+'\')">✅ ยืนยันการรับของที่ระลึก</button></div>';
+  });
 }
 function confirmGive(uid,rw,code){
   var r=getRw(rw),btn=g("btnGive");
+  var lg=findGiven(code);
+  if(lg)return showGivenBox(r,code,uid,lg.time);
+  if(btn&&btn.disabled)return;
   if(btn){btn.disabled=true;btn.textContent="⏳ กำลังยืนยัน...";}
-  sendToBeacon({action:"confirm",code:code,uid:uid},function(){
+  sendToBeacon({action:"confirm",code:code,uid:uid,reward:r.name,time:new Date().toLocaleString("th-TH")},function(){
     localGive(uid,rw,code);
   });
 }
 function localGive(uid,rw,code){
-  var r=getRw(rw);
-  LOG.push({code:code,reward:r.name,uid:uid,time:new Date().toLocaleString("th-TH")});
-  try{localStorage.setItem("msp69log",JSON.stringify(LOG));}catch(e){}
+  var r=getRw(rw),now=new Date().toLocaleString("th-TH");
+  if(!findGiven(code)){
+    LOG.push({code:code,reward:r.name,uid:uid,time:now});
+    try{localStorage.setItem("msp69log",JSON.stringify(LOG));}catch(e){}
+  }
   for(var i=0;i<S.tickets.length;i++)if(S.tickets[i].code===code){S.tickets[i].confirmed=true;save();render();}
-  g("verifyResult").innerHTML='<div class="vr" style="text-align:center"><div style="font-size:44px">✅</div><b>ยืนยันสำเร็จ</b><p class="muted">'+r.name+' · '+code+'</p><button class="primary" onclick="startScan(\'admin\')">📷 สแกนใบถัดไป</button></div>';
+  g("verifyResult").innerHTML='<div class="vr" style="text-align:center"><div style="font-size:44px">✅</div><b>ยืนยันสำเร็จ</b><p class="muted">'+r.name+' · '+code+'<br>'+now+'</p><button class="primary" onclick="startScan(\'admin\')">📷 สแกนใบถัดไป</button></div>';
   renderLog();
   toast("ยืนยันการรับของเรียบร้อย");
 }
@@ -570,6 +676,10 @@ g("adminPin").addEventListener("keydown",function(e){if(e.key==="Enter")adminLog
 g("jsflag").style.display="block";
 g("jsflag").textContent="✅ ระบบพร้อมใช้งาน · เชื่อมต่อ Google Sheet แล้ว";
 render();
+
+/* ===== [ADD] sync สถานะบัตรตอนเปิดแอป / กลับเข้าหน้าจอ ===== */
+syncTickets();
+document.addEventListener("visibilitychange",function(){ if(!document.hidden)syncTickets(); });
 </script>
 </body>
 </html>
